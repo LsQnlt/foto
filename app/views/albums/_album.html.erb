@@ -1,0 +1,14 @@
+<%= link_to album, id: dom_id(album), class: "block group w-62 h-52 flex flex-col items-center justify-center overflow-hidden group-hover:ring-2 group-hover:ring-blue-400 transition" do %>
+  <% if album.photos.any? %>
+    <div class="w-full h-40 rounded-sm mb-2 overflow-hidden group">
+      <%= image_tag url_for(album.photos.first.image), alt: album.title,  class: "w-full h-40 object-cover rounded-sm transition-transform duration-300 group-hover:scale-110" %>
+    </div>
+  <% else %>
+    <div class="w-full h-40 flex items-center justify-center rounded-sm mb-2 text-4xl group">
+      <span class="transition-all duration-300 group-hover:text-5xl">📷</span>
+    </div>
+  <% end %>
+
+  <h2 class="text-lg font-semibold mb-1 w-auto items-start w-full"><%= album.title %></h2>
+  <p class="text-sm text-gray-500 mb-2 w-auto items-start w-full"><%= album.description.presence || "Pas de description" %></p>
+<% end %>

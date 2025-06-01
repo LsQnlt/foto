@@ -23,6 +23,32 @@
   </head>
 
   <body>
-    <%= yield %>
+    <!-- Container central -->
+    <div class="m-10">
+      <%= link_to root_path do %>
+        <h1 class="text-red-600 font-bold tracking-widest text-5xl">Foto</h1>
+
+        <% unless current_page?(root_path) %>
+          <div class="inline-flex items-center transition font-medium text-gray-700">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Retour
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="mt-16 mb-10 p-4 sm:px-38 bg-white/80">
+      <% if notice %>
+        <div class="mb-6">
+          <p class="text-green-700 bg-green-100 px-4 py-2 rounded-lg shadow inline-block"><%= notice %></p>
+        </div>
+      <% end %>
+      <main>
+        <%= yield %>
+      </main>
+
+    </div>
   </body>
 </html>
