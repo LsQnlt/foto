@@ -1,6 +1,6 @@
 class AlbumsController < ApplicationController
   before_action :set_album, only: %i[ show ]
-
+  skip_before_action :require_authentication, only: [ :index, :show ]
   # GET /albums or /albums.json
   def index
     @albums = Album.all
@@ -11,13 +11,7 @@ class AlbumsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_album
-      @album = Album.find(params.expect(:id))
-    end
-
-    # Only allow a list of trusted parameters through.
-    def album_params
-      params.expect(album: [ :title, :description, :user_id ])
-    end
+  def set_album
+    @album = Album.find(params[:id])
+  end
 end

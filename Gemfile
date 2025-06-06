@@ -40,7 +40,10 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
-gem 'stringio', '3.1.7'
+gem "activeadmin"
+gem "activeadmin_assets"
+gem "rails-i18n", "~> 8.0.0"
+gem "active_storage_validations"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -58,6 +61,7 @@ group :development do
   gem "web-console"
   gem "foreman"
   gem "htmlbeautifier"
+  gem "annotaterb"
 end
 
 group :test do
