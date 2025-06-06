@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  ActiveAdmin.routes(self)
   resources :albums, only: %i[ index show ]
   resource :session
   resources :passwords, param: :token
