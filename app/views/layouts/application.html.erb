@@ -26,14 +26,11 @@
     <!-- Container central -->
     <div class="m-10">
       <%= link_to root_path do %>
-        <h1 class="text-red-600 font-bold tracking-widest text-5xl">Foto</h1>
+        <h1 class="text-red-600 font-bold tracking-widest text-7xl">foto</h1>
 
         <% unless current_page?(root_path) %>
-          <div class="inline-flex items-center transition font-medium text-gray-700">
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour
+          <div class="inline-flex items-center transition font-medium text-gray-700 text-7xl">
+            ←
           </div>
         <% end %>
       <% end %>
