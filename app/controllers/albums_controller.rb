@@ -8,6 +8,7 @@ class AlbumsController < ApplicationController
 
   # GET /albums/1 or /albums/1.json
   def show
+    @liked_photos = session[:liked_photos] || []
   end
 
   private
