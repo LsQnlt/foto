@@ -2,11 +2,12 @@
 #
 # Table name: photos
 #
-#  id         :integer          not null, primary key
-#  image      :string
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  album_id   :integer          not null
+#  id          :integer          not null, primary key
+#  image       :string
+#  likes_count :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  album_id    :integer          not null
 #
 # Indexes
 #
