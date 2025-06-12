@@ -11,6 +11,7 @@
 /storage/*
 !/storage/.keep
 /config/master.key
+.kamal/secrets/*
 
 # Node & JS tools
 /node_modules
