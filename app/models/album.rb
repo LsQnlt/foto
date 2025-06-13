@@ -21,7 +21,7 @@ class Album < ApplicationRecord
   attr_accessor :uploaded_photos
 
   belongs_to :user
-  has_many :photos
+  has_many :photos, dependent: :destroy
 
   accepts_nested_attributes_for :photos, allow_destroy: true
 
