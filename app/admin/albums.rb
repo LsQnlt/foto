@@ -19,7 +19,7 @@
 #
 ActiveAdmin.register Album do
   # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, :user_id, uploaded_photos: []
+  permit_params :title, :description, uploaded_photos: []
 
   # or consider:
   #
@@ -36,7 +36,6 @@ ActiveAdmin.register Album do
   filter :id
   filter :title
   filter :description
-  filter :user
   filter :created_at
   filter :updated_at
 
@@ -46,7 +45,6 @@ ActiveAdmin.register Album do
     id_column
     column :title
     column :description
-    column :user
     column :created_at
     column :updated_at
     actions
@@ -58,7 +56,6 @@ ActiveAdmin.register Album do
       row :id
       row :title
       row :description
-      row :user
       row :created_at
       row :updated_at
     end
@@ -79,7 +76,6 @@ ActiveAdmin.register Album do
     f.inputs do
       f.input :title
       f.input :description
-      f.input :user
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
     end
     f.actions
@@ -87,13 +83,19 @@ ActiveAdmin.register Album do
 
   controller do
     def create
-      super do |success, _failure|
+      @album = Album.new(permitted_params[:album])
+      p "test"
+      p Current.user
+      @album.user = Current.user
+      if @album.save
         if params[:album][:uploaded_photos].present?
           params[:album][:uploaded_photos].each do |uploaded_file|
-            resource.photos.create(image: uploaded_file)
+            @album.photos.create(image: uploaded_file)
           end
         end
-        redirect_to resource_path(resource) and return
+        redirect_to resource_path(@album)
+      else
+        render :new
       end
     end
 
