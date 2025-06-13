@@ -1,11 +1,21 @@
 Rails.application.routes.draw do
-  ActiveAdmin.routes(self)
-  resources :albums, only: %i[ index show ]
-  resource :session
-  resources :passwords, param: :token
-  resources :photos do
-    post :like, on: :member
-  end
+  # Pages statiques
+  get "pages/a_propos"
+  get "pages/contact"
+
+   # Admin
+   ActiveAdmin.routes(self)
+
+   # Albums et photos
+   resources :albums, only: [ :index, :show ]
+   resources :photos, only: [] do
+     post :like, on: :member
+   end
+
+   # Sessions & mots de passe
+   resource  :session, only: [ :new, :create, :destroy ]
+   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
