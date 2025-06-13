@@ -21,16 +21,16 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-
-  <body>
+  <body class="font-main">
     <!-- Container central -->
-    <div class="m-10">
+    <div class="m-10 font-title">
       <%= link_to root_path do %>
-        <h1 class="text-red-600 font-bold tracking-widest text-7xl">foto</h1>
+        <h1 class="text-main-dark tracking-widest text-5xl">foto</h1>
 
         <% unless current_page?(root_path) %>
-          <div class="inline-flex items-center transition font-medium text-gray-700 text-7xl">
-            ←
+          <div class="inline-flex items-center transition font-light text-gray-700 text-3xl
+         hover:scale-110 hover:text-main duration-200 cursor-pointer">
+            &larr;
           </div>
         <% end %>
       <% end %>
