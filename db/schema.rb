@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_200259) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_13_165506) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -44,6 +44,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_200259) do
     t.bigint "byte_size", null: false
     t.string "checksum"
     t.datetime "created_at", null: false
+    t.index ["filename"], name: "index_active_storage_blobs_on_filename"
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 

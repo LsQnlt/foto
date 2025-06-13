@@ -7,7 +7,7 @@
 
   <!-- Grille de photos -->
   <div data-controller="gallery" class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-4">
-    <% @album.photos.each_with_index do |photo, idx| %>
+    <% @photos.each_with_index do |photo, idx| %>
       <div class="rounded-2xl overflow-hidden bg-white shadow group relative">
         <% if photo.image.attached? %>
           <%= image_tag url_for(photo.image),

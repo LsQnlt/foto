@@ -3,16 +3,17 @@ class AlbumsController < ApplicationController
   skip_before_action :require_authentication, only: [ :index, :show ]
   # GET /albums or /albums.json
   def index
-    @albums = Album.all
+    @albums = Album.all.order(:title)
   end
 
   # GET /albums/1 or /albums/1.json
   def show
+    @photos = @album.photos.joins(image_attachment: :blob).order("active_storage_blobs.filename ASC")
     @liked_photos = session[:liked_photos] || []
   end
 
   private
   def set_album
-    @album = Album.find(params[:id])
+    @album = Album.includes(:photos).find(params[:id])
   end
 end
