@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: "MaPoliceTitre";
-  src: url("./MartianGrotesk-uWdBd.woff2") format("woff2");
+  src: url("martian-grotesk-uwdbd.woff2");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "MaPolicePrincipale";
-  src: url("./MartianGrotesk-CnTh.woff2") format("woff2");
+  src: url("martian-grotesk-cnth.woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
