@@ -23,6 +23,7 @@ class Photo < ApplicationRecord
 
   validates :image, attached: true
   validates :image, content_type: { in: [ :png, :jpeg ], spoofing_protection: true }
+  after_commit :generate_variants_async, on: :create
 
   def self.ransackable_attributes(auth_object = nil)
     [ "album_id", "created_at", "id", "image", "updated_at" ]
@@ -31,4 +32,10 @@ class Photo < ApplicationRecord
   def self.ransackable_associations(auth_object = nil)
     [ "album", "image_attachment", "image_blob" ]
   end
+
+  private
+
+    def generate_variants_async
+      GeneratePhotoVariantsJob.perform_later(id)
+    end
 end
