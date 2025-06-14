@@ -3,7 +3,9 @@ class AlbumsController < ApplicationController
   skip_before_action :require_authentication, only: [ :index, :show ]
   # GET /albums or /albums.json
   def index
-    @albums = Album.all.order(:title)
+    @albums = Album
+      .includes(cover_photo: { image_attachment: :blob })
+      .order(:title)
   end
 
   # GET /albums/1 or /albums/1.json
