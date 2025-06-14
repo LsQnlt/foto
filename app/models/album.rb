@@ -22,6 +22,7 @@ class Album < ApplicationRecord
 
   belongs_to :user
   has_many :photos, dependent: :destroy
+  has_one :cover_photo, -> { order(created_at: :asc) }, class_name: 'Photo'
 
   accepts_nested_attributes_for :photos, allow_destroy: true
 
