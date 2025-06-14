@@ -1,8 +1,185 @@
-# Omakase Ruby styling for Rails
+#  Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
+inherit_from: .rubocop_todo.yml
+
+plugins:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-thread_safety
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "bin/**/*"
+    - "db/**/*"
+    - "config/**/*"
+    - "node_modules/**/*"
+    - "script/**/*"
+    - "support/**/*"
+    - "tmp/**/*"
+    - "test/**/*"
+    - "vendor/bundle/**/*"
+    - "spec/tasks/scripts/cleanup_duplicated_patients_spec.rb"
+
+Style/ClassMethodsDefinitions:
+  Enabled: false
+Style/ConditionalAssignment:
+  Enabled: false
+Style/StringLiterals:
+  Enabled: false
+Style/RedundantReturn:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/WordArray:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Style/MutableConstant:
+  Enabled: false
+# Style/QuotedSymbols:
 #   Enabled: false
+Style/SignalException:
+  Enabled: false
+Style/MissingRespondToMissing:
+  Enabled: false
+Lint/MissingSuper:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+# Layout/LineLength:
+#   Max: 120 TODO => waiting to correct previous code
+Style/EmptyMethod:
+  Enabled: false
+Bundler/OrderedGems:
+  Enabled: false
+
+Layout/ClassStructure:
+  Description: "Enforces a configured order of definitions within a class body."
+  Enabled: true
+  Categories:
+    module_inclusion:
+      - include
+      - prepend
+      - extend
+  ExpectedOrder:
+    - module_inclusion
+    - constants
+    - public_class_methods
+    - initializer
+    - public_methods
+    - protected_methods
+    - private_methods
+
+Layout/FirstArrayElementLineBreak:
+  Description: "Checks for a line break before the first element in a multi-line array."
+  Enabled: true
+
+Layout/FirstHashElementLineBreak:
+  Description: "Checks for a line break before the first element in a multi-line hash."
+  Enabled: true
+
+Layout/FirstMethodParameterLineBreak:
+  Description: "Checks for a line break before the first parameter in a multi-line method parameter definition."
+  Enabled: true
+
+Layout/FirstArgumentIndentation:
+  Description: "Checks the indentation of the first argument in a method call."
+  Enabled: true
+  # The first parameter should always be indented one level relative to the
+  # parent that is receiving the parameter
+  EnforcedStyle: consistent
+
+Layout/FirstArrayElementIndentation:
+  Description: "Checks the indentation of the first element in an array literal."
+  Enabled: true
+  # The value `consistent` means that the indentation of the first element shall
+  # always be relative to the first position of the line where the opening
+  # bracket is.
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  Description: "Checks the indentation of the first key in a hash literal."
+  Enabled: true
+  # The value `consistent` means that the indentation of the first key shall
+  # always be relative to the first position of the line where the opening
+  # brace is.
+  EnforcedStyle: consistent
+
+Naming/PredicateName:
+  NamePrefix:
+    - is_
+  ForbiddenPrefixes:
+    - is_
+  Exclude:
+    - "test/**/*"
+    - "spec/**/*"
+
+Performance/CaseWhenSplat:
+  Enabled: true
+
+Rails/InverseOf:
+  Description: "Checks for associations where the inverse cannot be determined automatically."
+  Enabled: false
+
+Rails/HttpStatus:
+  Description: "Enforces use of symbolic or numeric value to describe HTTP status."
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Description: 'Forces a "dependent" options for has_one and has_many rails relations.'
+  Enabled: false
+
+Style/CommentAnnotation:
+  Description: "Checks formatting of special comments (TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE, INFO)."
+  Enabled: true
+  Keywords:
+    - TODO
+    - FIXME
+    - OPTIMIZE
+    - HACK
+    - REVIEW
+    - NOTE
+    - INFO
+
+Style/Send:
+  Description: >-
+    Prefer `Object#__send__` or `Object#public_send` to `send`,
+    as `send` may overlap with existing methods.
+  Enabled: true
+
+Style/GlobalVars:
+  Description: "Do not introduce global variables."
+  StyleGuide: "#instance-vars"
+  Reference: "https://www.zenspider.com/ruby/quickref.html"
+  Enabled: true
+  VersionAdded: "0.13"
+  # Built-in global variables are allowed by default.
+  AllowedVariables: ["$segment_client", "$json_web_token"]
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Exclude:
+    - "test/**/*"
+    - "spec/**/*"
+  Enabled: false
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 10
