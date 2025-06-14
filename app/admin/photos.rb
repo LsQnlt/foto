@@ -46,6 +46,9 @@ ActiveAdmin.register Photo do
     column "Nom de l'image" do |photo|
       photo.image.filename.to_s if photo.image.attached?
     end
+    column "Poid de l'image en Mo" do |photo|
+      (photo.image.blob.byte_size.to_f / 1.megabyte).round(2).to_s if photo.image.attached?
+    end
     column :album
     column :created_at
     column :updated_at
