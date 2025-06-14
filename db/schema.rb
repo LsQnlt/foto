@@ -64,11 +64,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_165506) do
   end
 
   create_table "photos", force: :cascade do |t|
-    t.string "image"
     t.integer "album_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "likes_count"
+    t.string "image"
     t.index ["album_id"], name: "index_photos_on_album_id"
   end
 

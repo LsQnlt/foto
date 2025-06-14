@@ -33,9 +33,13 @@ class Photo < ApplicationRecord
     [ "album", "image_attachment", "image_blob" ]
   end
 
+  def lightbox_variant
+    image.variant(resize_to_limit: [ 1200, 900 ])
+  end
+
   private
 
     def generate_variants_async
-      GeneratePhotoVariantsJob.perform_later(id)
+      OptimizePhotoJob.perform_later(id)
     end
 end

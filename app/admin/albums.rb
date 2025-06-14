@@ -84,8 +84,6 @@ ActiveAdmin.register Album do
   controller do
     def create
       @album = Album.new(permitted_params[:album])
-      p "test"
-      p Current.user
       @album.user = Current.user
       if @album.save
         if params[:album][:uploaded_photos].present?

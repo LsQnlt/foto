@@ -12,7 +12,7 @@
           <% if photo.image.attached? %>
             <%= image_tag photo.image.variant(resize_to_fill: [400, 300]), alt: "Photo", loading: "lazy",
             class: "gallery-photo w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer",
-            data: { action: "click->gallery#open", photo_index: idx, photo_id: photo.id, liked: @liked_photos.include?(photo.id), full_url: url_for(photo.image) } %>
+            data: { action: "click->gallery#open", photo_index: idx, photo_id: photo.id, liked: @liked_photos.include?(photo.id), full_url: url_for(photo.image.variant(resize_to_limit: [1200, 900])) } %>
             <!-- Like compteur en overlay, coin bas droite -->
             <% if photo.likes_count.present? && photo.likes_count > 0 %>
               <div class="absolute bottom-4 right-4 flex items-center gap-1 bg-white/80 px-2 py-1 rounded-full shadow z-10">
