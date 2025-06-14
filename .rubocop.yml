@@ -26,6 +26,7 @@ Style/ClassMethodsDefinitions:
   Enabled: false
 Style/ConditionalAssignment:
   Enabled: false
+  AutoCorrect: true
 Style/StringLiterals:
   Enabled: false
 Style/RedundantReturn:
@@ -48,6 +49,7 @@ Lint/MissingSuper:
   Enabled: false
 Style/FrozenStringLiteralComment:
   Enabled: false
+  AutoCorrect: true
 # Layout/LineLength:
 #   Max: 120 TODO => waiting to correct previous code
 Style/EmptyMethod:
@@ -75,14 +77,17 @@ Layout/ClassStructure:
 Layout/FirstArrayElementLineBreak:
   Description: "Checks for a line break before the first element in a multi-line array."
   Enabled: true
+  AutoCorrect: true
 
 Layout/FirstHashElementLineBreak:
   Description: "Checks for a line break before the first element in a multi-line hash."
   Enabled: true
+  AutoCorrect: true
 
 Layout/FirstMethodParameterLineBreak:
   Description: "Checks for a line break before the first parameter in a multi-line method parameter definition."
   Enabled: true
+  AutoCorrect: true
 
 Layout/FirstArgumentIndentation:
   Description: "Checks the indentation of the first argument in a method call."
@@ -90,6 +95,7 @@ Layout/FirstArgumentIndentation:
   # The first parameter should always be indented one level relative to the
   # parent that is receiving the parameter
   EnforcedStyle: consistent
+  AutoCorrect: true
 
 Layout/FirstArrayElementIndentation:
   Description: "Checks the indentation of the first element in an array literal."
@@ -98,6 +104,7 @@ Layout/FirstArrayElementIndentation:
   # always be relative to the first position of the line where the opening
   # bracket is.
   EnforcedStyle: consistent
+  AutoCorrect: true
 
 Layout/FirstHashElementIndentation:
   Description: "Checks the indentation of the first key in a hash literal."
@@ -106,6 +113,17 @@ Layout/FirstHashElementIndentation:
   # always be relative to the first position of the line where the opening
   # brace is.
   EnforcedStyle: consistent
+  AutoCorrect: true
+
+Layout/IndentationWidth:
+  Enabled: true
+  AutoCorrect: true
+  IndentationWidth: 2
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: indented_internal_methods
+  AutoCorrect: true
 
 Naming/PredicateName:
   NamePrefix:
@@ -122,14 +140,17 @@ Performance/CaseWhenSplat:
 Rails/InverseOf:
   Description: "Checks for associations where the inverse cannot be determined automatically."
   Enabled: false
+  AutoCorrect: true
 
 Rails/HttpStatus:
   Description: "Enforces use of symbolic or numeric value to describe HTTP status."
   Enabled: false
+  AutoCorrect: true
 
 Rails/HasManyOrHasOneDependent:
   Description: 'Forces a "dependent" options for has_one and has_many rails relations.'
   Enabled: false
+  AutoCorrect: true
 
 Style/CommentAnnotation:
   Description: "Checks formatting of special comments (TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE, INFO)."
@@ -142,6 +163,7 @@ Style/CommentAnnotation:
     - REVIEW
     - NOTE
     - INFO
+  AutoCorrect: true
 
 Style/Send:
   Description: >-

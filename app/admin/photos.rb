@@ -43,6 +43,9 @@ ActiveAdmin.register Photo do
     selectable_column
     id_column
     column :image
+    column "Nom de l'image" do |photo|
+      photo.image.filename.to_s if photo.image.attached?
+    end
     column :album
     column :created_at
     column :updated_at
@@ -70,5 +73,13 @@ ActiveAdmin.register Photo do
       f.input :album
     end
     f.actions
+  end
+
+  controller do
+    def scoped_collection
+      super.includes(image_attachment: :blob)
+           .references(:blob)
+           .order("active_storage_blobs.filename ASC")
+    end
   end
 end
