@@ -16,7 +16,8 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
+    apt-get install --no-install-recommends -y \
+    curl libjemalloc2 libvips sqlite3 imagemagick && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -55,7 +56,8 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 FROM base
 
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y file && \
+    apt-get install --no-install-recommends -y \
+    file imagemagick && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application
