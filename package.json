@@ -1,0 +1,49 @@
+{
+  "private": true,
+  "scripts": {
+    "pre-commit": "lint-staged",
+    "pre-push": "",
+    "full-lint": "yarn run lint && yarn run prettier",
+    "lint": "eslint 'app/javascript/**/*.{js,vue,ts,tsx}'",
+    "lint:fix": "eslint 'app/javascript/**/*.{js,vue,ts,tsx}' --fix",
+    "lint:debug": "eslint 'app/javascript/**/*.{js,vue,ts,tsx}' --debug",
+    "lint:todo": "eslint-todo-generator -f yaml 'app/javascript/**/*.{js,vue,ts,tsx}'",
+    "prettier": "npx prettier --check --config ./.prettierrc.json --ignore-unknown '{app/assets/stylesheets,app/javascript,spec}/**/*.{js,es6,jsx,css,scss,sass,md,vue,json,ts}'",
+    "prettier:fix": "yarn run prettier  --config ./.prettierrc.json  --ignore-unknown --write '{app/assets/stylesheets,app/javascript,spec}/**/*.{js,es6,jsx,css,scss,sass,md,vue,json,ts}'",
+    "format": "yarn run lint:fix && yarn run prettier:fix",
+    "lint-staged": "lint-staged",
+    "dev": "./bin/vite dev"
+  },
+  "dependencies": {
+    "@hotwired/turbo-rails": "^7.3.0"
+  },
+  "devDependencies": {
+    "eslint": "8.42.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-tailwindcss": "3.12.1",
+    "eslint-plugin-vue": "9.14.1",
+    "eslint-todo-generator": "^0.1.0",
+    "lint-staged": "^13.2.2",
+    "prettier": "^3.2.5",
+    "prettier-plugin-tailwindcss": "^0.5.14",
+    "vue-eslint-parser": "^9.3.1"
+  },
+  "lint-staged": {
+    "{app,spec}/**/*.{js,es6,jsx,css,scss,sass}": [
+      "npx prettier --config ./.prettierrc --ignore-unknown --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "packageManager": "yarn@3.6.0",
+  "name": "foto",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:LsQnlt/foto.git",
+  "author": "Louis Quenault <louis.quenault@laposte.net>",
+  "license": "MIT"
+}
