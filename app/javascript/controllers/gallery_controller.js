@@ -1,17 +1,37 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    this.photos = Array.from(document.querySelectorAll(".gallery-photo"));
-    this.modal = document.getElementById("gallery-modal");
-    this.currentIndex = null;
+  static targets = ["modal"];
 
-    // Fermer avec Esc
-    window.addEventListener("keydown", this.handleKey.bind(this));
+  connect() {
+    this.photos = Array.from(this.element.querySelectorAll(".gallery-photo"));
+    this.currentIndex = null;
+    this.preloaded = {};
+    window.addEventListener("keydown", this.handleKey);
+
+    // Précharge les 3 premières grandes images
+    [0, 1, 2].forEach((i) => this.preload(i));
   }
 
   disconnect() {
-    window.removeEventListener("keydown", this.handleKey.bind(this));
+    window.removeEventListener("keydown", this.handleKey);
+  }
+
+  hoverPreload(event) {
+    const index = parseInt(event.target.dataset.photoIndex, 10);
+    this.preload(index);
+  }
+
+  preload(index) {
+    if (index < 0 || index >= this.photos.length) return;
+    const url = this.photos[index].dataset.fullUrl;
+    if (this.preloaded[url]) return;
+
+    const img = new Image();
+    img.src = url;
+    this.preloaded[url] = img;
+
+    img.onerror = () => console.warn(`❌ Erreur chargement: [${index}] ${url}`);
   }
 
   open(event) {
@@ -22,88 +42,38 @@ export default class extends Controller {
 
   showModal() {
     const photo = this.photos[this.currentIndex];
-    const photoId = this.photos[this.currentIndex].dataset.photoId;
-    const alreadyLiked = photo.dataset.liked === "true";
-    const fullImageUrl = photo.dataset.fullUrl;
+    const { fullUrl, photoId, liked } = photo.dataset;
+    let img = this.preloaded[fullUrl];
 
-    this.modal.innerHTML = `
-      <div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50" data-action="click->gallery#close">
-        <div id="spinner" class="flex justify-center items-center">
-          <svg class="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
-            width="24" height="24">
-            <path
-              d="M32 3C35.8083 3 39.5794 3.75011 43.0978 5.20749C46.6163 6.66488 49.8132 8.80101 52.5061 11.4939C55.199 14.1868 57.3351 17.3837 58.7925 20.9022C60.2499 24.4206 61 28.1917 61 32C61 35.8083 60.2499 39.5794 58.7925 43.0978C57.3351 46.6163 55.199 49.8132 52.5061 52.5061C49.8132 55.199 46.6163 57.3351 43.0978 58.7925C39.5794 60.2499 35.8083 61 32 61C28.1917 61 24.4206 60.2499 20.9022 58.7925C17.3837 57.3351 14.1868 55.199 11.4939 52.5061C8.801 49.8132 6.66487 46.6163 5.20749 43.0978C3.7501 39.5794 3 35.8083 3 32C3 28.1917 3.75011 24.4206 5.2075 20.9022C6.66489 17.3837 8.80101 14.1868 11.4939 11.4939C14.1868 8.80099 17.3838 6.66487 20.9022 5.20749C24.4206 3.7501 28.1917 3 32 3L32 3Z"
-              stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path
-              d="M32 3C36.5778 3 41.0906 4.08374 45.1692 6.16256C49.2477 8.24138 52.7762 11.2562 55.466 14.9605C58.1558 18.6647 59.9304 22.9531 60.6448 27.4748C61.3591 31.9965 60.9928 36.6232 59.5759 40.9762"
-              stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="text-main">
-            </path>
-          </svg>
-        </div>
-      </div>
-    `;
+    if (!img) {
+      img = new Image();
+      img.src = fullUrl;
+      this.preloaded[fullUrl] = img;
+    }
 
-    const img = new Image();
-    img.src = fullImageUrl;
-    img.onload = () => {
-      this.modal.innerHTML = `
-        <div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50" data-action="click->gallery#close">
-          <button class="absolute top-8 right-10 text-white/80 hover:text-white text-4xl z-60" data-action="click->gallery#close" aria-label="Fermer">&times;</button>
-          <button
-            class="absolute left-8 top-1/2 -translate-y-1/2 p-2 bg-black/40 hover:bg-black/60 rounded-full z-60"
-            data-action="click->gallery#previous"
-            ${this.currentIndex === 0 ? "disabled" : ""}
-            aria-label="Photo précédente"
-          >
-            <!-- Chevron Left SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-          </button>
-          <div class="flex flex-col">
-            <img
-              src="${fullImageUrl}"
-              class="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-xl transition-all duration-200"
-              alt="Photo"
-              style="margin: 0 auto; display: block;"
-            />
-            <div class="flex justify-center items-center gap-2 px-3 py-2 rounded-full shadow z-60">
-              <button
-                class="like-btn text-pink-500 hover:scale-110 transition ${
-                  alreadyLiked ? " opacity-60 pointer-events-none" : ""
-                }"
-                data-photo-id="${photoId}"
-                data-action="click->gallery#like"
-                aria-label="Like"
-                ${alreadyLiked ? "disabled" : ""}
-              >
-                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          <button
-            class="absolute right-8 top-1/2 -translate-y-1/2 p-2 bg-black/40 hover:bg-black/60 rounded-full z-60"
-            data-action="click->gallery#next"
-            ${this.currentIndex === this.photos.length - 1 ? "disabled" : ""}
-            aria-label="Photo suivante"
-          >
-            <!-- Chevron Right SVG -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-          </button>
-        </div>
-    `;
-    };
-    this.modal.classList.remove("hidden");
+    const display = () => this.renderImage(img, photoId, liked === "true");
+
+    this.preload(this.currentIndex + 1);
+    this.preload(this.currentIndex - 1);
+    this.preload(this.currentIndex + 2);
+    this.preload(this.currentIndex - 2);
+
+    this.modalTarget.innerHTML = this.spinnerTemplate();
+    this.modalTarget.classList.remove("hidden");
+
+    img.complete
+      ? display()
+      : img.addEventListener("load", display, { once: true });
   }
 
   close(event) {
     // Ferme si on clique le backdrop ou la croix
     if (
       event.target.dataset.action?.includes("gallery#close") ||
-      event.target.classList.contains("bg-black/80")
+      event.target.classList.contains("bg-black/90")
     ) {
-      this.modal.classList.add("hidden");
-      this.modal.innerHTML = "";
+      this.modalTarget.classList.add("hidden");
+      this.modalTarget.innerHTML = "";
     }
   }
 
@@ -126,10 +96,10 @@ export default class extends Controller {
   }
 
   handleKey(event) {
-    if (!this.modal.classList.contains("hidden")) {
+    if (!this.modalTarget.classList.contains("hidden")) {
       if (event.key === "Escape") {
-        this.modal.classList.add("hidden");
-        this.modal.innerHTML = "";
+        this.modalTarget.classList.add("hidden");
+        this.modalTarget.innerHTML = "";
       } else if (event.key === "ArrowLeft") {
         this.previous();
       } else if (event.key === "ArrowRight") {
@@ -158,8 +128,6 @@ export default class extends Controller {
       const data = await res.json();
       // Grille :
       // Cherche le compteur correspondant à la photo
-      console.log(data);
-      console.log(data.likes_count);
       if (gridCounter) {
         gridCounter.textContent = data.likes_count;
       } else {
@@ -178,6 +146,54 @@ export default class extends Controller {
       btn.classList.add("opacity-60", "pointer-events-none");
       btn.setAttribute("disabled", "disabled");
     }
+  }
+
+  arrowClass(disabled) {
+    return disabled
+      ? "opacity-30 pointer-events-none cursor-not-allowed"
+      : "hover:bg-black/60";
+  }
+
+  renderImage(img, photoId, alreadyLiked) {
+    this.modalTarget.innerHTML = `
+    <div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50" data-action="click->gallery#close">
+      <button class="absolute top-8 right-10 text-white/80 hover:text-white text-4xl z-60" data-action="click->gallery#close" aria-label="Fermer">&times;</button>
+      <button class="absolute left-8 top-1/2 -translate-y-1/2 p-2 bg-black/40 rounded-full z-60 ${this.arrowClass(this.currentIndex === 0)}"
+              data-action="click->gallery#previous"
+              ${this.currentIndex === 0 ? "disabled" : ""}
+              aria-label="Photo précédente">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+      </button>
+      <div class="flex flex-col">
+        <img
+          src="${img.src}"
+          class="max-w-[90vw] max-h-[90vh] object-contain rounded-2xl shadow-xl transition-all duration-200"
+          alt="Photo"
+          style="margin: 0 auto; display: block;"
+        />
+        <div class="flex justify-center items-center gap-2 px-3 py-2 rounded-full shadow z-60">
+          <button class="like-btn text-pink-500 hover:scale-110 transition ${alreadyLiked ? "opacity-60 pointer-events-none" : ""}"
+                  data-photo-id="${photoId}"
+                  data-action="click->gallery#like"
+                  aria-label="Like"
+                  ${alreadyLiked ? "disabled" : ""}>
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09
+                3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4
+                6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button class="absolute right-8 top-1/2 -translate-y-1/2 p-2 bg-black/40 rounded-full z-60 ${this.arrowClass(this.currentIndex === this.photos.length - 1)}"
+              data-action="click->gallery#next"
+              ${this.currentIndex === this.photos.length - 1 ? "disabled" : ""}
+              aria-label="Photo suivante">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </button>
+    </div>
+  `;
   }
 
   addLikeCounter(photoId, count) {
@@ -199,6 +215,22 @@ export default class extends Controller {
       `;
       photoCard.appendChild(likeDiv);
     }
+  }
+
+  spinnerTemplate() {
+    return `
+      <div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50" data-action="click->gallery#close">
+        <div id="spinner" class="flex justify-center items-center">
+          <svg class="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+            width="24" height="24">
+            <path d="M32 3C35.8 3 39.6 3.8 43.1 5.2c3.5 1.4 6.7 3.5 9.4 6.2 2.7 2.7 4.8 5.9 6.2 9.4 1.4 3.5 2.3 7.3 2.3 11s-.8 7.5-2.3 11c-1.4 3.5-3.5 6.7-6.2 9.4-2.7 2.7-5.9 4.8-9.4 6.2-3.5 1.4-7.3 2.3-11 2.3s-7.5-.8-11-2.3c-3.5-1.4-6.7-3.5-9.4-6.2-2.7-2.7-4.8-5.9-6.2-9.4C3.8 39.6 3 35.8 3 32s.8-7.5 2.3-11c1.4-3.5 3.5-6.7 6.2-9.4 2.7-2.7 5.9-4.8 9.4-6.2C24.5 3.8 28.2 3 32 3Z"
+              stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M32 3c4.6 0 9.1 1 13.3 3 4.2 2 8 5.2 10.6 9.2"
+              stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="text-main"/>
+          </svg>
+        </div>
+      </div>
+    `;
   }
   r;
 }
