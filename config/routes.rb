@@ -28,4 +28,5 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "albums#index"
+  mount ActiveAnalytics::Engine, at: "analytics"  # http://localhost:3000/analytics
 end

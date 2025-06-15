@@ -44,6 +44,9 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_analytics (0.4.1)
+      browser (>= 1.0.0)
+      rails (>= 5.2.0)
     active_storage_validations (3.0.0)
       activejob (>= 6.1.4)
       activemodel (>= 6.1.4)
@@ -106,6 +109,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (7.0.2)
       racc
+    browser (6.2.0)
     builder (3.3.0)
     capybara (3.40.0)
       addressable
@@ -425,6 +429,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_analytics
   active_storage_validations
   activeadmin
   activeadmin_assets

@@ -1,0 +1,30 @@
+<% def simplified_path(path)
+  if path.include?("/rails/active_storage/")
+    # prend uniquement le dernier segment (le nom de fichier)
+    File.basename(path)
+  else
+    path
+  end
+end %>
+<% if pages.empty? %>
+  <div class="is-empty">
+    <span>no data</span>
+  </div>
+<% else %>
+  <table>
+    <% for page in pages %>
+      <tr>
+        <td>
+          <% if page.path.present? %>
+            <%= link_to simplified_path(page.path), page_path(site: page.host, page: page_to_params(page.path), from: params[:from], to: params[:to]) %>
+          <% else %>
+            <%= site_icon page.host %>
+            <%= link_to page.host, site_path(site: page.host, from: params[:from], to: params[:to]) %>
+            <small>(page not provided <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy#strict-origin-when-cross-origin">?</a>)</small>
+          <% end %>
+        </td>
+        <td class="number"><%= format_view_count page.total %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
