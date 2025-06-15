@@ -35,7 +35,7 @@ class OptimizePhotoJob < ActiveJob::Base
         # Attacher à la place de l'ancien
         photo.image.attach(
           io: processed,
-          filename: "compressed_#{original_name}",
+          filename: "#{original_name}",
           content_type: "image/jpeg"
         )
       end
