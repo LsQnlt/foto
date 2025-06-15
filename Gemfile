@@ -45,6 +45,7 @@ gem "activeadmin_assets"
 gem "rails-i18n", "~> 8.0.0"
 gem "active_storage_validations"
 gem "mini_magick"
+gem 'active_analytics'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
