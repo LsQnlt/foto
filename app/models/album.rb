@@ -4,6 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  description :text
+#  published   :boolean          default(FALSE)
 #  title       :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -25,6 +26,8 @@ class Album < ApplicationRecord
   has_one :cover_photo, -> { order(created_at: :asc) }, class_name: 'Photo'
 
   accepts_nested_attributes_for :photos, allow_destroy: true
+
+  scope :published, -> { where(published: true) }
 
   def self.ransackable_attributes(auth_object = nil)
     [ "created_at", "description", "id", "id_value", "title", "updated_at", "user_id" ]

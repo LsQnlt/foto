@@ -19,7 +19,7 @@
 #
 ActiveAdmin.register Album do
   # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, uploaded_photos: []
+  permit_params :title, :description, :published, uploaded_photos: []
 
   # or consider:
   #
@@ -47,6 +47,7 @@ ActiveAdmin.register Album do
     column :description
     column :created_at
     column :updated_at
+    column :published
     actions
   end
 
@@ -58,6 +59,7 @@ ActiveAdmin.register Album do
       row :description
       row :created_at
       row :updated_at
+      row :published
     end
 
     panel "Photos" do
@@ -77,6 +79,7 @@ ActiveAdmin.register Album do
       f.input :title
       f.input :description
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
+      f.input :published
     end
     f.actions
   end

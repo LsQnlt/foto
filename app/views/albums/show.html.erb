@@ -17,7 +17,7 @@
               photo_index: idx,
               photo_id: photo.id,
               liked: @liked_photos.include?(photo.id),
-              full_url: url_for(photo.lightbox_variant),
+              full_url: "#{url_for(photo.lightbox_variant)}?track=lightbox",
               alt: "foto.rip - #{@album.title} #{idx}"
               }
             %>
