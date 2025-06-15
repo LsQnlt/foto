@@ -1,15 +1,12 @@
 class OptimizePhotoJob < ActiveJob::Base
   queue_as :default
 
-  VARIANTS = {
-    thumb: [ 400, 300 ],
-    lightbox: [ 1200, 900 ]
-  }
-
   def perform(photo_id)
     photo = Photo.find_by(id: photo_id)
     begin
       optimize_original(photo)
+      photo.reload               # recharge l’objet
+      photo.image.reload         # recharge le blob/attachment
       generate_variants(photo)
     rescue => e
       Rails.logger.error("[OptimizePhotoJob] Échec traitement photo #{photo_id} : #{e.class} #{e.message}")
@@ -22,26 +19,27 @@ class OptimizePhotoJob < ActiveJob::Base
       require "image_processing/mini_magick"
 
       original_name = photo.image.blob.filename
-
+      # 1. On crée le WebP DANS le bloc (fichier origine encore ouvert)
+      processed = nil
       photo.image.open do |file|
         processed = ImageProcessing::MiniMagick
                       .source(file)
-                      .resize_to_limit(2000, 2000)
-                      .convert("jpeg")
-                      .strip
-                      .saver(quality: 75)
+                      .resize_to_limit(2048, 2048)
+                      .auto_orient
+                      .convert("webp")
                       .call
+      end                 # <= ici l'ancien fichier est fermé, rien n'est encore purgé
 
-        # Attacher à la place de l'ancien
-        photo.image.attach(
-          io: processed,
-          filename: "#{original_name}",
-          content_type: "image/jpeg"
-        )
-      end
+      # 2. On remplace l’attachement une fois le bloc terminé
+      photo.image.attach(
+        io:  File.open(processed.path, "rb"),           # Tempfile encore dispo
+        filename: "#{original_name.base}.webp",
+        content_type: "image/webp"
+      )
     end
 
     def generate_variants(photo)
-      VARIANTS.each_value { |size| photo.image.variant(resize_to_limit: size).processed }
+      photo.thumb_variant(method: :resize_to_fill).processed
+      photo.lightbox_variant(method: :resize_to_limit).processed
     end
 end
