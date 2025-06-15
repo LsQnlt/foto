@@ -1,10 +1,13 @@
 class AlbumsController < ApplicationController
   before_action :set_album, only: %i[ show ]
   skip_before_action :require_authentication, only: [ :index, :show ]
+  after_action :record_page_view, only: %i[ show ]
+
   # GET /albums or /albums.json
   def index
     @albums = Album
       .includes(cover_photo: { image_attachment: :blob })
+      .published
       .order(:title)
   end
 

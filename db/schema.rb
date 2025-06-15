@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_154036) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_195906) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -84,6 +84,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_154036) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "published", default: false
     t.index ["user_id"], name: "index_albums_on_user_id"
   end
 
