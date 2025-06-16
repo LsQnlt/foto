@@ -1,6 +1,6 @@
 class AlbumsController < ApplicationController
+  allow_unauthenticated_access only: [ :index, :show ]
   before_action :set_album, only: %i[ show ]
-  skip_before_action :require_authentication, only: [ :index, :show ]
   after_action :record_page_view, only: %i[ show ]
 
   # GET /albums or /albums.json
