@@ -1,4 +1,6 @@
 class PhotosController < ApplicationController
+  allow_unauthenticated_access only: :like
+
   def like
     @photo = Photo.find(params[:id])
     session[:liked_photos] ||= []

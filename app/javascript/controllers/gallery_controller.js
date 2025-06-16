@@ -7,14 +7,15 @@ export default class extends Controller {
     this.photos = Array.from(this.element.querySelectorAll(".gallery-photo"));
     this.currentIndex = null;
     this.preloaded = {};
-    window.addEventListener("keydown", this.handleKey);
 
+    this.boundHandleKey = this.handleKey.bind(this);
+    window.addEventListener("keydown", this.boundHandleKey);
     // Précharge les 3 premières grandes images
     [0, 1, 2].forEach((i) => this.preload(i));
   }
 
   disconnect() {
-    window.removeEventListener("keydown", this.handleKey);
+    window.removeEventListener("keydown", this.boundHandleKey);
   }
 
   hoverPreload(event) {
@@ -98,6 +99,8 @@ export default class extends Controller {
   handleKey(event) {
     if (!this.modalTarget.classList.contains("hidden")) {
       if (event.key === "Escape") {
+        console.log(event, "escape")
+        console.log(this.modalTarget)
         this.modalTarget.classList.add("hidden");
         this.modalTarget.innerHTML = "";
       } else if (event.key === "ArrowLeft") {
