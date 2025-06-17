@@ -1,13 +1,13 @@
-<div data-controller="gallery" class="flex w-full">
+<div data-controller="gallery" class="flex flex-wrap w-full">
   <!-- Header album -->
-  <div class="min-w-0 pt-16 pb-6 text-center">
+  <div class="min-w-0 pb-6 text-center sm:pt-16">
     <h1 class="text-4xl font-bold mb-2"><%= @album.title %></h1>
-    <p class="text-gray-500 text-lg"><%= @album.created_at.to_date %></p>
+    <p class="text-gray-500 text-lg"><%= @album.description %></p>
   </div>
   <!-- Grille de photos -->
   <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-4">
     <% @photos.each_with_index do |photo, idx| %>
-      <% cache(photo) do %>
+      <% cache [photo, photo.likes_count] do %>
         <div class="rounded-2xl overflow-hidden bg-white shadow group relative">
           <% if photo.image.attached? %>
             <%= image_tag photo.thumb_variant(method: :resize_to_fill), alt: "Photo", loading: "lazy",

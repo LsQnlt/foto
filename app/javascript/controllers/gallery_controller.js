@@ -148,6 +148,10 @@ export default class extends Controller {
       // Déjà liké => désactive visuellement aussi
       btn.classList.add("opacity-60", "pointer-events-none");
       btn.setAttribute("disabled", "disabled");
+    } else {
+      console.log("Erreur non prise en compte:", res)
+      btn.classList.add("opacity-60", "pointer-events-none");
+      btn.setAttribute("disabled", "disabled");
     }
   }
 
