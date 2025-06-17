@@ -4,7 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  image       :string
-#  likes_count :integer
+#  likes_count :integer          default(0)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  album_id    :integer          not null
