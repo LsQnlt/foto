@@ -31,6 +31,15 @@ ActiveAdmin.register Album do
 
   # For security, limit the actions that should be available
   actions :all, except: []
+  member_action :delete_photo, method: :delete do
+    photo = Photo.find_by(id: params[:photo_id], album_id: params[:album_id])
+    if photo
+      photo.destroy
+      redirect_back fallback_location: admin_album_path(params[:album_id]), notice: "Photo supprimée avec succès."
+    else
+      redirect_back fallback_location: admin_album_path(params[:album_id]), alert: "Photo introuvable."
+    end
+  end
 
   # Add or remove filters to toggle their visibility
   filter :id
@@ -66,7 +75,12 @@ ActiveAdmin.register Album do
       table_for album.photos do
         column :id
         column "Photo" do |photo|
-          image_tag url_for(photo.image), size: "100x100" if photo.image.attached?
+          image_tag photo.thumb_variant(method: :resize_to_fill), size: "400x300" if photo.image.attached?
+        end
+        column "Actions" do |photo|
+          link_to "Supprimer", delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
+                  method: :delete,
+                  data: { confirm: "Êtes-vous sûr de vouloir supprimer cette photo ?" }
         end
       end
     end
@@ -85,6 +99,12 @@ ActiveAdmin.register Album do
   end
 
   controller do
+    # Toutes les requêtes qui partent de Album (index, show, etc.)
+    # utiliseront maintenant le eager-loading et éviteront les N+1
+    def scoped_collection
+      super.includes(photos: [ image_attachment: :blob ])
+    end
+
     def create
       @album = Album.new(permitted_params[:album])
       @album.user = Current.user
