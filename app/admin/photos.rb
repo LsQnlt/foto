@@ -42,11 +42,13 @@ ActiveAdmin.register Photo do
   index do
     selectable_column
     id_column
-    column :image
-    column "Nom de l'image" do |photo|
+    column "Image" do |photo|
+      image_tag photo.thumb_variant(method: :resize_to_fill) if photo.image.attached?
+    end
+    column "Nom" do |photo|
       photo.image.filename.to_s if photo.image.attached?
     end
-    column "Poid de l'image en Mo" do |photo|
+    column "Poid (Mo)" do |photo|
       (photo.image.blob.byte_size.to_f / 1.megabyte).round(2).to_s if photo.image.attached?
     end
     column :album
