@@ -7,16 +7,15 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="Foto" />
+    <link rel="manifest" href="/site.webmanifest" />
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
@@ -25,7 +24,6 @@
     <!-- Container central -->
     <div class="mt-10 mx-8 mb-8 font-title">
       <%= link_to root_path, class:"flex" do %>
-
         <div class="mr-3 inline-flex transition font-light text-gray-700 text-3xl
       hover:scale-110 hover:text-main duration-200 cursor-pointer">
           <% unless current_page?(root_path) %>
@@ -37,7 +35,6 @@
         <h1 class="text-main-dark tracking-widest text-5xl translate-y-[2px]">foto</h1>
       <% end %>
     </div>
-
     <div class="mt-8 mb-10 p-4 sm:px-18 bg-white/80 flex-1">
       <% if notice %>
         <div class="mb-6">
@@ -47,7 +44,6 @@
       <main>
         <%= yield %>
       </main>
-
     </div>
   </body>
   <footer class="mt-24 px-6 py-12 text-gray-300 text-sm">
