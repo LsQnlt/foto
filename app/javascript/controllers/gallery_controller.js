@@ -7,6 +7,7 @@ export default class extends Controller {
     this.photos = Array.from(this.element.querySelectorAll(".gallery-photo"));
     this.currentIndex = null;
     this.preloaded = {};
+    this.alreadyTracked = new Set();
 
     this.boundHandleKey = this.handleKey.bind(this);
     window.addEventListener("keydown", this.boundHandleKey);
@@ -99,8 +100,8 @@ export default class extends Controller {
   handleKey(event) {
     if (!this.modalTarget.classList.contains("hidden")) {
       if (event.key === "Escape") {
-        console.log(event, "escape")
-        console.log(this.modalTarget)
+        console.log(event, "escape");
+        console.log(this.modalTarget);
         this.modalTarget.classList.add("hidden");
         this.modalTarget.innerHTML = "";
       } else if (event.key === "ArrowLeft") {
@@ -149,10 +150,22 @@ export default class extends Controller {
       btn.classList.add("opacity-60", "pointer-events-none");
       btn.setAttribute("disabled", "disabled");
     } else {
-      console.log("Erreur non prise en compte:", res)
+      console.log("Erreur non prise en compte:", res);
       btn.classList.add("opacity-60", "pointer-events-none");
       btn.setAttribute("disabled", "disabled");
     }
+  }
+
+  trackView(photoId) {
+    if (this.alreadyTracked.has(photoId)) return;
+    this.alreadyTracked.add(photoId);
+    fetch(`/photos/${photoId}/track_view`, {
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')
+          .content,
+      },
+    }).catch(console.error);
   }
 
   arrowClass(disabled) {
@@ -201,6 +214,7 @@ export default class extends Controller {
       </button>
     </div>
   `;
+    this.trackView(photoId);
   }
 
   addLikeCounter(photoId, count) {

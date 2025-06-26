@@ -1,7 +1,7 @@
 <% def simplified_path(path)
   if path.include?("/rails/active_storage/")
     # prend uniquement le dernier segment (le nom de fichier)
-    File.basename(path)
+    image_tag path, alt: "Photo", loading: "lazy",height: '60', width: '60'
   else
     path
   end

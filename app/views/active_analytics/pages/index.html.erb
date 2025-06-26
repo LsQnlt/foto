@@ -1,0 +1,21 @@
+<%
+@images     = []
+@real_pages = []
+
+@pages.each do |page|
+  if page.path.include?("/rails/active_storage/")
+    @images << page            # stocke les images
+  else
+    @real_pages << page        # stocke les vraies pages
+  end
+end
+%>
+<section >
+  <h3>Pages</h3>
+  <%= render "/active_analytics/pages/table", pages: @real_pages %>
+</div>
+</section>
+<section >
+  <h3>Images</h3>
+  <%= render "/active_analytics/pages/table", pages: @images %>
+</section>

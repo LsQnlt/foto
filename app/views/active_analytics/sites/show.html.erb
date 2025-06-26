@@ -1,0 +1,34 @@
+<%
+@images     = []
+@real_pages = []
+
+@pages.each do |page|
+  if page.path.include?("/rails/active_storage/")
+    @images << page            # stocke les images
+  else
+    @real_pages << page        # stocke les vraies pages
+  end
+end
+%>
+<section class="card">
+  <%= render "/active_analytics/sites/histogram_header", histogram: @histogram, previous_histogram: @previous_histogram %>
+  <%= render "/active_analytics/sites/histogram", histogram: @histogram %>
+</section>
+<ul class="grid-auto">
+  <li class="card">
+    <h3>Sources <%= link_to "view all", referrers_path(from: params[:from], to: params[:to]) %></h3>
+    <%= render "/active_analytics/referrers/table", referrers: @referrers %>
+  </li>
+  <li class="card">
+    <h3>Pages <%= link_to "view all", pages_path(from: params[:from], to: params[:to]) %></h3>
+    <%= render "/active_analytics/pages/table", pages: @real_pages %>
+  </li>
+  <li class="card">
+    <h3>Images <%= link_to "view all", pages_path(from: params[:from], to: params[:to]) %></h3>
+    <%= render "/active_analytics/pages/table", pages: @images %>
+  </li>
+  <li class="card">
+    <h3>Browsers <%= link_to "view all", browsers_path(from: params[:from], to: params[:to]) %></h3>
+    <%= render "/active_analytics/browsers/table", browsers: @browsers %>
+  </li>
+</ul>
