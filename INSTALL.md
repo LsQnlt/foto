@@ -85,4 +85,7 @@ Foto is designed to deploy with **Kamal 2**. A minimal `deploy.yml` sample is in
 - Docker & Kamal installed on the server
 - A valid SSH key
 
+cp .env.example .env # fill with secrets
+bin/deploy deploy # in place of kamal deploy
+
 _Read the comments in that file and adjust according to your environment._

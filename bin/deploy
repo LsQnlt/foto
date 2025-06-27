@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+# Charge .env si présent
+if [ -f .env ]; then
+  echo "Loading secrets from .env"
+  set -a
+  source .env
+  set +a
+fi
+
+# Passe tous les arguments à la vraie commande kamal
+bundle exec kamal "$@"
