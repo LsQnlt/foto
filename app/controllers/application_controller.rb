@@ -1,3 +1,8 @@
+# Foto - Copyright (C) 2025 Louis Quenault
+#
+# Licensed under the GNU AGPL v3.0.
+# See the LICENSE file or https://www.gnu.org/licenses/agpl-3.0.html
+
 class ApplicationController < ActionController::Base
   include Authentication
 

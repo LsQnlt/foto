@@ -1,26 +1,33 @@
-# README
+# 📸 What is Foto?
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+**Foto** is a Rails-based photo book application designed for sharing and displaying large numbers of photos by organizing them into albums. You can easily upload and browse your photos in a clean and familiar interface.f
 
-Things you may want to cover:
+This platform was built to meet a few specific needs and principles:
 
-for deploy
+- Avoid storing personal images on cloud or Big Tech (GAFAM) services like Instagram
+- Display as many photos as I want, without arbitrary limits
+- Keep the application lightweight and optimized for user experience
+- Recreate the feeling of browsing a family photo album
 
-- Ruby version
+# 🛠️ Tech Stack
 
-- System dependencies
+**Foto** is developed using:
 
-- Configuration
+- **Rails 8** (with default configuration)
+- **SQLite** as the database in development
+- **Stimulus** (via Hotwire) to handle JavaScript with minimal overhead
+- **ActiveStorage** for managing image uploads and storage (locally)
+- **ActiveJob** for background processing, following Rails conventions
+- **ActiveAdmin** to manage photos and albums, offering better integration with Rails 8 asset management
+- **Kamal 2** for deployment, currently hosted on an **OVH VPS**
 
-- Database creation
+# 📚 More
 
-- Database initialization
+- [How to Install Foto →](INSTALL.md)
+- [How to Contribute →](CONTRIBUTING.md)
 
-- How to run the test suite
+## 📄 License
 
-- Services (job queues, cache servers, search engines, etc.)
+Foto is licensed under the [GNU Affero General Public License v3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 
-- Deployment instructions
-
-- ...
+This means that if you run Foto as a service or modify it, you must make your modified version's source code available to users.
