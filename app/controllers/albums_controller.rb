@@ -17,7 +17,7 @@ class AlbumsController < ApplicationController
       .photos
       .includes(image_attachment: :blob)
       .references(:blob)
-      .order("active_storage_blobs.filename ASC")
+      .order(:created_at)
 
     @liked_photos = session[:liked_photos] || []
   end
