@@ -8,6 +8,11 @@ export default class extends Controller {
     this.currentIndex = null;
     this.preloaded = {};
     this.alreadyTracked = new Set();
+    this.likedPhotoIds = new Set(
+      this.photos // on parcourt les vignettes
+        .filter((p) => p.dataset.liked === "true")
+        .map((p) => p.dataset.photoId)
+    );
 
     this.boundHandleKey = this.handleKey.bind(this);
     window.addEventListener("keydown", this.boundHandleKey);
@@ -44,7 +49,7 @@ export default class extends Controller {
 
   showModal() {
     const photo = this.photos[this.currentIndex];
-    const { fullUrl, photoId, liked } = photo.dataset;
+    const { fullUrl, photoId } = photo.dataset;
     let img = this.preloaded[fullUrl];
 
     if (!img) {
@@ -53,7 +58,7 @@ export default class extends Controller {
       this.preloaded[fullUrl] = img;
     }
 
-    const display = () => this.renderImage(img, photoId, liked === "true");
+    const display = () => this.renderImage(img, photoId);
 
     this.preload(this.currentIndex + 1);
     this.preload(this.currentIndex - 1);
@@ -112,9 +117,14 @@ export default class extends Controller {
     }
   }
 
+  isLiked(photoId) {
+    return this.likedPhotoIds.has(photoId);
+  }
+
   async like(event) {
     event.stopPropagation();
     const btn = event.currentTarget;
+    const span = btn.querySelector("span");
     const photoId = btn.dataset.photoId;
     const gridCounter = document
       .querySelector(`.gallery-photo[data-photo-id="${photoId}"]`)
@@ -138,8 +148,16 @@ export default class extends Controller {
         this.addLikeCounter(photoId, data.likes_count);
       }
 
+      // ➜ état global
+      this.likedPhotoIds.add(photoId);
+
       // Désactive et grise le bouton immédiatement
-      btn.classList.add("opacity-60", "pointer-events-none");
+      btn.classList.add("text-main");
+      btn.classList.remove("text-main-lighter", "hover:text-main");
+      span.classList.add("opacity-100");
+      span.classList.remove("text-main", "hover:text-main-lighter");
+      btn.setAttribute("title", "J'ai déjà aimé");
+      btn.setAttribute("aria-label", "J'ai déjà aimé");
       btn.setAttribute("disabled", "disabled");
 
       // Ajoute un effet
@@ -174,7 +192,8 @@ export default class extends Controller {
       : "hover:bg-black/60";
   }
 
-  renderImage(img, photoId, alreadyLiked) {
+  renderImage(img, photoId) {
+    const alreadyLiked = this.isLiked(photoId);
     this.modalTarget.innerHTML = `
     <div class="fixed inset-0 bg-black/90 flex items-center justify-center z-50" data-action="click->gallery#close">
       <button class="absolute top-8 right-10 text-white/80 hover:text-white text-4xl z-60" data-action="click->gallery#close" aria-label="Fermer">&times;</button>
@@ -192,12 +211,14 @@ export default class extends Controller {
           style="margin: 0 auto; display: block;"
         />
         <div class="flex justify-center items-center gap-2 px-3 py-2 rounded-full shadow z-60">
-          <button class="like-btn text-pink-500 hover:scale-110 transition ${alreadyLiked ? "opacity-60 pointer-events-none" : ""}"
-                  data-photo-id="${photoId}"
-                  data-action="click->gallery#like"
-                  aria-label="Like"
-                  ${alreadyLiked ? "disabled" : ""}>
-            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+          <button class="like-btn relative ${alreadyLiked ? " text-main" : "text-main-lighter hover:text-main transition hover:scale-110 "}"
+          title="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
+          data-photo-id="${photoId}"
+          data-action="click->gallery#like"
+          aria-label="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
+          ${alreadyLiked ? "disabled" : ""}>
+            <span class="z-10 absolute inset-0 --top-1 -right-2 hover:scale-100 tracking-tight font-black font-mono ${alreadyLiked ? "opacity-100" : "text-main hover:text-main-lighter"}">+</span>
+            <svg class="z-0 w-12 h-12" fill="currentColor" viewBox="0 0 30 30">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
                 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09
                 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4

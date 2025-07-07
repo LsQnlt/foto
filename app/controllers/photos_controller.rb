@@ -9,7 +9,7 @@ class PhotosController < ApplicationController
       return
     end
 
-    @photo.likes_count += 1
+    @photo.increment!(:likes_count)
 
     if @photo.save
       session[:liked_photos] << @photo.id
