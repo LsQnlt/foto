@@ -8,7 +8,7 @@ class AlbumsController < ApplicationController
     @albums = Album
       .includes(cover_photo: { image_attachment: :blob })
       .published
-      .order(Arel.sql("CAST(SUBSTR(title, 1, INSTR(title, '.') - 1) AS INTEGER)"), :title)
+      .order(Arel.sql("CAST(SUBSTR(title, 1, INSTR(title, '.') - 1) AS INTEGER) DESC"), title: :desc)
   end
 
   # GET /albums/1 or /albums/1.json
