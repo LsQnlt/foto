@@ -124,7 +124,7 @@ export default class extends Controller {
   async like(event) {
     event.stopPropagation();
     const btn = event.currentTarget;
-    const span = btn.querySelector("span");
+    const svg = btn.querySelector("svg");
     const photoId = btn.dataset.photoId;
     const gridCounter = document
       .querySelector(`.gallery-photo[data-photo-id="${photoId}"]`)
@@ -154,8 +154,8 @@ export default class extends Controller {
       // Désactive et grise le bouton immédiatement
       btn.classList.add("text-main");
       btn.classList.remove("text-main-lighter", "hover:text-main");
-      span.classList.add("opacity-100");
-      span.classList.remove("text-main", "hover:text-main-lighter");
+      svg.classList.add("fill-current");
+      svg.classList.remove("group-hover:fill-current");
       btn.setAttribute("title", "J'ai déjà aimé");
       btn.setAttribute("aria-label", "J'ai déjà aimé");
       btn.setAttribute("disabled", "disabled");
@@ -211,18 +211,23 @@ export default class extends Controller {
           style="margin: 0 auto; display: block;"
         />
         <div class="flex justify-center items-center gap-2 px-3 py-2 rounded-full shadow z-60">
-          <button class="like-btn relative ${alreadyLiked ? " text-main" : "text-main-lighter hover:text-main transition hover:scale-110 "}"
-          title="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
-          data-photo-id="${photoId}"
-          data-action="click->gallery#like"
-          aria-label="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
-          ${alreadyLiked ? "disabled" : ""}>
-            <span class="z-10 absolute inset-0 --top-1 -right-2 hover:scale-100 tracking-tight font-black font-mono ${alreadyLiked ? "opacity-100" : "text-main hover:text-main-lighter"}">+</span>
-            <svg class="z-0 w-12 h-12" fill="currentColor" viewBox="0 0 30 30">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09
-                3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4
-                6.86-8.55 11.54L12 21.35z"/>
+          <button
+            class="like-btn relative group ${alreadyLiked ? "text-main" : "text-main-lighter hover:text-main transition hover:scale-110"}"
+            title="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
+            data-photo-id="${photoId}"
+            data-action="click->gallery#like"
+            aria-label="${alreadyLiked ? "Déjà aimé" : "Ajouter un J’aime"}"
+            ${alreadyLiked ? "disabled" : ""}>
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 30 30"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="z-0 w-12 h-12 transition-all duration-200
+                  ${alreadyLiked ? "fill-current" : "group-hover:fill-current"}"
+                fill="none">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
             </svg>
           </button>
         </div>
