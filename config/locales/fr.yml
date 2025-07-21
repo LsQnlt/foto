@@ -104,7 +104,7 @@ fr:
         title: Renvoyer les informations de déverrouillage
       username:
         title: Nom d'utilisateur
-    download: 'Télécharger :'
+    download: "Télécharger :"
     edit: Modifier
     edit_model: Modifier %{model}
     empty: Vide
@@ -133,7 +133,7 @@ fr:
       next: Suivant
       one: Affichage de <b>1</b> sur <b>1</b>
       one_page: Affichage de <b>tous les %{n}</b>
-      per_page: 'Par page '
+      per_page: "Par page "
       previous: Précédent
     powered_by: Propulsé par %{active_admin} %{version}
     previous: Précédent
@@ -145,9 +145,9 @@ fr:
       filters: Filtres
       search_status: Statut de la recherche
     status_tag:
-      'no': Non
+      "no": Non
       unset: Inconnu
-      'yes': Oui
+      "yes": Oui
     view: Voir
   activerecord:
     attributes:
@@ -168,7 +168,7 @@ fr:
   time:
     am: a.m.
     formats:
-      default: '%a, %d %b %Y %H:%M:%S %z'
-      long: '%B %d, %Y %H:%M'
-      short: '%d %b %H:%M'
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%B %d, %Y %H:%M"
+      short: "%d %b %H:%M"
     pm: p.m.

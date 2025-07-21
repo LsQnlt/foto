@@ -7,14 +7,16 @@ Rails.application.routes.draw do
    ActiveAdmin.routes(self)
 
    # Albums et photos
-   resources :albums, only: [ :index, :show ]
-   resources :photos, only: [] do
-     post :like, on: :member
-   end
+  scope '/:pseudonym', as: 'user' do
+    resources :albums, only: [:index, :show]
+  end
+  resources :photos, only: [] do
+    post :like, on: :member
+  end
 
-   # Sessions & mots de passe
-   resource  :session, only: [ :new, :create, :destroy ]
-   resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+  # Sessions & mots de passe
+  resource  :session, only: [ :new, :create, :destroy ]
+  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -27,7 +29,7 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root "albums#index"
+  root to: redirect('/LsQnlt/albums')
   mount ActiveAnalytics::Engine, at: "analytics"  # http://localhost:3000/analytics
   resources :photos do
     post :track_view, on: :member   # /photos/:id/track_view

@@ -1,4 +1,4 @@
-<%= link_to album, id: dom_id(album), class: "block group w-62 h-62 flex flex-col items-center justify-start overflow-hidden group-hover:ring-2 group-hover:ring-blue-400 transition" do %>
+<%= link_to user_album_path(id: album.id), id: dom_id(album), class: "block group w-62 h-62 flex flex-col items-center justify-start overflow-hidden group-hover:ring-2 group-hover:ring-blue-400 transition" do %>
   <% if (photo = album.cover_photo) %>
     <div class="w-full h-40 rounded-sm mb-2 overflow-hidden group">
       <%= image_tag photo.thumb_variant(method: :resize_to_fill), alt: album.title, loading: "lazy", class: "w-full h-40 object-cover rounded-sm transition-transform duration-300 group-hover:scale-110" %>

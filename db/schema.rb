@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_17_152819) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_19_141341) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -89,12 +89,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_152819) do
   end
 
   create_table "photos", force: :cascade do |t|
-    t.string "image"
     t.integer "album_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "likes_count", default: 0
+    t.string "image"
     t.index ["album_id"], name: "index_photos_on_album_id"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string "name"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
+    t.index ["name"], name: "index_roles_on_name"
+    t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -111,7 +122,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_17_152819) do
     t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "pseudonym", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+    t.index ["pseudonym"], name: "index_users_on_pseudonym", unique: true
+  end
+
+  create_table "users_roles", id: false, force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "role_id"
+    t.index ["role_id"], name: "index_users_roles_on_role_id"
+    t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"
+    t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

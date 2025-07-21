@@ -102,12 +102,12 @@ ActiveAdmin.register Album do
     # Toutes les requêtes qui partent de Album (index, show, etc.)
     # utiliseront maintenant le eager-loading et éviteront les N+1
     def scoped_collection
-      super.includes(photos: [ image_attachment: :blob ])
+      policy_scope(Album).includes(photos: [ image_attachment: :blob ])
     end
 
     def create
       @album = Album.new(permitted_params[:album])
-      @album.user = Current.user
+      @album.user = pundit_user
       if @album.save
         if params[:album][:uploaded_photos].present?
           params[:album][:uploaded_photos].each do |uploaded_file|

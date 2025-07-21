@@ -65,4 +65,10 @@ ActiveAdmin.register User do
     end
     f.actions
   end
+
+  controller do
+    def scoped_collection
+      policy_scope(User)
+    end
+  end
 end

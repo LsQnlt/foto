@@ -82,9 +82,10 @@ ActiveAdmin.register Photo do
 
   controller do
     def scoped_collection
-      super.includes(image_attachment: :blob)
-           .references(:blob)
-           .order("active_storage_blobs.filename ASC")
+      policy_scope(Photo)
+        .includes(image_attachment: :blob)
+        .references(:blob)
+        .order("active_storage_blobs.filename ASC")
     end
   end
 end

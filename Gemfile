@@ -40,12 +40,16 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+gem "tailwindcss-rails", "~> 4.2"
+
 gem "activeadmin"
 gem "activeadmin_assets"
 gem "rails-i18n", "~> 8.0.0"
 gem "active_storage_validations"
 gem "mini_magick"
 gem 'active_analytics'
+gem "rolify"
+gem "pundit", "~> 2.5"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -71,7 +75,6 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "foreman"
-  gem "htmlbeautifier"
   gem "annotaterb"
 end
 
@@ -80,5 +83,3 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
-
-gem "tailwindcss-rails", "~> 4.2"

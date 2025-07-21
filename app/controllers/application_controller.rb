@@ -5,10 +5,15 @@
 
 class ApplicationController < ActionController::Base
   include Authentication
+  include Pundit::Authorization
 
   def record_page_view
     if response.content_type && response.content_type.start_with?("text/html")
       ActiveAnalytics.record_request(request)
     end
+  end
+
+  def pundit_user
+    Current.user
   end
 end
