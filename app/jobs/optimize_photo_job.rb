@@ -1,4 +1,4 @@
-class OptimizePhotoJob < ActiveJob::Base
+class OptimizePhotoJob < ApplicationJob
   queue_as :default
 
   def perform(photo_id)
@@ -15,31 +15,31 @@ class OptimizePhotoJob < ActiveJob::Base
 
   private
 
-    def optimize_original(photo)
-      require "image_processing/mini_magick"
+  def optimize_original(photo)
+    require "image_processing/mini_magick"
 
-      original_name = photo.image.blob.filename
-      # 1. On crée le WebP DANS le bloc (fichier origine encore ouvert)
-      processed = nil
-      photo.image.open do |file|
-        processed = ImageProcessing::MiniMagick
-                      .source(file)
-                      .resize_to_limit(2048, 2048)
-                      .auto_orient
-                      .convert("webp")
-                      .call
-      end                 # <= ici l'ancien fichier est fermé, rien n'est encore purgé
+    original_name = photo.image.blob.filename
+    # 1. On crée le WebP DANS le bloc (fichier origine encore ouvert)
+    processed = nil
+    photo.image.open do |file|
+      processed = ImageProcessing::MiniMagick
+        .source(file)
+        .resize_to_limit(2048, 2048)
+        .auto_orient
+        .convert("webp")
+        .call
+    end # <= ici l'ancien fichier est fermé, rien n'est encore purgé
 
-      # 2. On remplace l’attachement une fois le bloc terminé
-      photo.image.attach(
-        io:  File.open(processed.path, "rb"),           # Tempfile encore dispo
-        filename: "#{original_name.base}.webp",
-        content_type: "image/webp"
-      )
-    end
+    # 2. On remplace l’attachement une fois le bloc terminé
+    photo.image.attach(
+      io:  File.open(processed.path, "rb"), # Tempfile encore dispo
+      filename: "#{original_name.base}.webp",
+      content_type: "image/webp",
+    )
+  end
 
-    def generate_variants(photo)
-      photo.thumb_variant(method: :resize_to_fill).processed
-      photo.lightbox_variant(method: :resize_to_limit).processed
-    end
+  def generate_variants(photo)
+    photo.thumb_variant(method: :resize_to_fill).processed
+    photo.lightbox_variant(method: :resize_to_limit).processed
+  end
 end

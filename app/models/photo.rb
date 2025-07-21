@@ -28,11 +28,11 @@ class Photo < ApplicationRecord
   after_commit :generate_variants_async, on: :create
 
   def self.ransackable_attributes(auth_object = nil)
-    [ "album_id", "created_at", "id", "image", "updated_at" ]
+    ["album_id", "created_at", "id", "image", "updated_at"]
   end
 
   def self.ransackable_associations(auth_object = nil)
-    [ "album", "image_attachment", "image_blob" ]
+    ["album", "image_attachment", "image_blob"]
   end
 
   def lightbox_variant(method: nil) # See PhotoVariants
@@ -45,7 +45,7 @@ class Photo < ApplicationRecord
 
   private
 
-    def generate_variants_async
-      OptimizePhotoJob.perform_later(id)
-    end
+  def generate_variants_async
+    OptimizePhotoJob.perform_later(id)
+  end
 end

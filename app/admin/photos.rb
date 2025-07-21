@@ -74,7 +74,7 @@ ActiveAdmin.register Photo do
   form do |f|
     f.semantic_errors(*f.object.errors.attribute_names)
     f.inputs do
-      f.input :image,  as: :file
+      f.input :image, as: :file
       f.input :album
     end
     f.actions

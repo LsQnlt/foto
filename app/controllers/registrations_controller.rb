@@ -1,5 +1,5 @@
 class RegistrationsController < ApplicationController
-  allow_unauthenticated_access only: [ :new, :create ]
+  allow_unauthenticated_access only: [:new, :create]
   before_action :set_invitation
   before_action :redirect_if_no_invitation
 
@@ -22,18 +22,18 @@ class RegistrationsController < ApplicationController
 
   private
 
-    def set_invitation
-      @invitation = Invitation.usable.find_by(token: params[:token])
-    end
+  def set_invitation
+    @invitation = Invitation.usable.find_by(token: params[:token])
+  end
 
-    def redirect_if_no_invitation
-      unless @invitation
-        redirect_to root_path, alert: "Lien invalide ou expiré."
-        return
-      end
+  def redirect_if_no_invitation
+    unless @invitation
+      redirect_to root_path, alert: "Lien invalide ou expiré."
+      return
     end
+  end
 
-    def user_params
-      params.require(:user).permit(:password, :password_confirmation, :pseudonym)
-    end
+  def user_params
+    params.expect(user: [:password, :password_confirmation, :pseudonym])
+  end
 end

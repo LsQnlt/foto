@@ -1,5 +1,5 @@
 #  Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+inherit_gem: { rubocop-shopify: rubocop.yml }
 
 inherit_from: .rubocop_todo.yml
 
@@ -113,16 +113,6 @@ Layout/FirstHashElementIndentation:
   # always be relative to the first position of the line where the opening
   # brace is.
   EnforcedStyle: consistent
-  AutoCorrect: true
-
-Layout/IndentationWidth:
-  Enabled: true
-  AutoCorrect: true
-  IndentationWidth: 2
-
-Layout/IndentationConsistency:
-  Enabled: true
-  EnforcedStyle: indented_internal_methods
   AutoCorrect: true
 
 Naming/PredicateName:

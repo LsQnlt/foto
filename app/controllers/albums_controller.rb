@@ -1,8 +1,8 @@
 class AlbumsController < ApplicationController
-  allow_unauthenticated_access only: [ :index, :show ]
+  allow_unauthenticated_access only: [:index, :show]
   before_action :set_user
-  before_action :set_album, only: %i[ show ]
-  after_action :record_page_view, only: %i[ show ]
+  before_action :set_album, only: [:show]
+  after_action :record_page_view, only: [:show]
 
   # GET /albums or /albums.json
   def index
@@ -25,11 +25,12 @@ class AlbumsController < ApplicationController
   end
 
   private
-    def set_user
-      @user = User.find_by!(pseudonym: params[:pseudonym])
-    end
 
-    def set_album
-      @album = Album.includes(:photos).find(params[:id])
-    end
+  def set_user
+    @user = User.find_by!(pseudonym: params[:pseudonym])
+  end
+
+  def set_album
+    @album = Album.includes(:photos).find(params[:id])
+  end
 end

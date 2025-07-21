@@ -1,5 +1,5 @@
 class PhotosController < ApplicationController
-  allow_unauthenticated_access only: [ :like, :track_view ]
+  allow_unauthenticated_access only: [:like, :track_view]
 
   def like
     @photo = Photo.find(params[:id])

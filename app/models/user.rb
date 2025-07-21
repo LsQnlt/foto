@@ -29,19 +29,18 @@ class User < ApplicationRecord
   after_initialize :assign_default_role, if: :new_record?
 
   def self.ransackable_attributes(auth_object = nil)
-    [ "created_at", "email_address", "id", "id_value", "password_digest", "updated_at" ]
+    ["created_at", "email_address", "id", "id_value", "password_digest", "updated_at"]
   end
 
   def assign_default_role
-    self.add_role(:user) if self.roles.blank?
+    add_role(:user) if roles.blank?
   end
 
   private
 
-
-    def ensure_only_one_role(role)
-      if self.roles.count >= 1
-        raise ActiveRecord::Rollback, "Seulement un rôle peut être attribué"
-      end
+  def ensure_only_one_role(role)
+    if roles.count >= 1
+      raise ActiveRecord::Rollback, "Seulement un rôle peut être attribué"
     end
+  end
 end

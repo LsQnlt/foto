@@ -3,7 +3,7 @@ class AdminBaseController < ApplicationController
 
   private
 
-    def require_admin
-      raise ActionController::RoutingError, "Not Found" unless authenticated?
-    end
+  def require_admin
+    raise ActionController::RoutingError, "Not Found" unless authenticated?
+  end
 end

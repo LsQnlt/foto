@@ -50,7 +50,7 @@ PreCommit:
 
     quiet: false
   RuboCop:
-    enabled: true
+    enabled: false
     on_warn: fail # Treat all warnings as failures
     command: ["bundle", "exec", "rubocop"]
   RailsBestPractices:

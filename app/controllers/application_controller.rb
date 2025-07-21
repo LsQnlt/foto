@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
   def record_page_view
-    if response.content_type && response.content_type.start_with?("text/html")
+    if response.content_type&.start_with?("text/html")
       ActiveAnalytics.record_request(request)
     end
   end

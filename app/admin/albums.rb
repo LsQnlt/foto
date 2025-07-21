@@ -78,9 +78,10 @@ ActiveAdmin.register Album do
           image_tag photo.thumb_variant(method: :resize_to_fill), size: "400x300" if photo.image.attached?
         end
         column "Actions" do |photo|
-          link_to "Supprimer", delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
-                  method: :delete,
-                  data: { confirm: "Êtes-vous sûr de vouloir supprimer cette photo ?" }
+          link_to "Supprimer",
+            delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
+            method: :delete,
+            data: { confirm: "Êtes-vous sûr de vouloir supprimer cette photo ?" }
         end
       end
     end
@@ -94,12 +95,12 @@ ActiveAdmin.register Album do
       f.input :description
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
       f.input :published
-      if  Current.user.has_role?(:admin)
+      if Current.user.has_role?(:admin)
         f.input :user_id,
-                as: :select,
-                collection: User.all.map { |u| [ u.pseudonym, u.id ] },
-                include_blank: false,
-                selected: Current.user.id
+          as: :select,
+          collection: User.all.map { |u| [u.pseudonym, u.id] },
+          include_blank: false,
+          selected: Current.user.id
       end
     end
     f.actions
@@ -109,7 +110,7 @@ ActiveAdmin.register Album do
     # Toutes les requêtes qui partent de Album (index, show, etc.)
     # utiliseront maintenant le eager-loading et éviteront les N+1
     def scoped_collection
-      policy_scope(Album).includes(photos: [ image_attachment: :blob ])
+      policy_scope(Album).includes(photos: [image_attachment: :blob])
     end
 
     def create
@@ -133,7 +134,7 @@ ActiveAdmin.register Album do
     end
 
     def update
-      super do |success, _failure|
+      super do |_success, _failure|
         if params[:album][:uploaded_photos].present?
           params[:album][:uploaded_photos].each do |uploaded_file|
             resource.photos.create(image: uploaded_file)
