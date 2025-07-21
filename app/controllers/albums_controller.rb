@@ -7,6 +7,7 @@ class AlbumsController < ApplicationController
   # GET /albums or /albums.json
   def index
     @albums = Album
+      .where(user_id: @user.id)
       .includes(cover_photo: { image_attachment: :blob })
       .published
       .order(Arel.sql("CAST(SUBSTR(title, 1, INSTR(title, '.') - 1) AS INTEGER) DESC"), title: :desc)

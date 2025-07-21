@@ -24,6 +24,7 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   validates :pseudonym, presence: true, uniqueness: true
   validates :email_address, presence: true, uniqueness: true
+  validates :password, length: { minimum: 8 }, if: -> { new_record? || !password.nil? }
 
   after_initialize :assign_default_role, if: :new_record?
 

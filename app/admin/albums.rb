@@ -19,7 +19,7 @@
 #
 ActiveAdmin.register Album do
   # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, :published, uploaded_photos: []
+  permit_params :title, :description, :published, :user_id, uploaded_photos: []
 
   # or consider:
   #
@@ -94,6 +94,13 @@ ActiveAdmin.register Album do
       f.input :description
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
       f.input :published
+      if  Current.user.has_role?(:admin)
+        f.input :user_id,
+                as: :select,
+                collection: User.all.map { |u| [ u.pseudonym, u.id ] },
+                include_blank: false,
+                selected: Current.user.id
+      end
     end
     f.actions
   end
@@ -107,7 +114,12 @@ ActiveAdmin.register Album do
 
     def create
       @album = Album.new(permitted_params[:album])
-      @album.user = pundit_user
+      if Current.user.has_role?(:admin)
+        @album.user_id ||= Current.user.id
+      else
+        @album.user = Current.user
+      end
+
       if @album.save
         if params[:album][:uploaded_photos].present?
           params[:album][:uploaded_photos].each do |uploaded_file|

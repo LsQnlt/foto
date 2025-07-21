@@ -6,17 +6,12 @@ Rails.application.routes.draw do
    # Admin
    ActiveAdmin.routes(self)
 
-   # Albums et photos
-  scope '/:pseudonym', as: 'user' do
-    resources :albums, only: [:index, :show]
-  end
-  resources :photos, only: [] do
-    post :like, on: :member
-  end
-
-  # Sessions & mots de passe
+  # Sessions
   resource  :session, only: [ :new, :create, :destroy ]
-  resources :passwords, param: :token, only: [ :new, :create, :edit, :update ]
+
+  # Inscription
+  get '/register', to: 'registrations#new', as: :new_user_registration
+  post '/register', to: 'registrations#create', as: :user_registration
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -29,9 +24,23 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root to: redirect('/LsQnlt/albums')
+  root to: redirect('/LsQnlt')
   mount ActiveAnalytics::Engine, at: "analytics"  # http://localhost:3000/analytics
   resources :photos do
     post :track_view, on: :member   # /photos/:id/track_view
+  end
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
+
+  # Albums et photos
+  scope '/:pseudonym', as: 'user' do
+    get '/', to: 'albums#index', as: :albums # => user_albums_path(pseudonym: ...)
+    resources :albums, only: [:show]
+  end
+
+  resources :photos, only: [] do
+    post :like, on: :member
   end
 end

@@ -76,6 +76,7 @@ group :development do
   gem "web-console"
   gem "foreman"
   gem "annotaterb"
+  gem "letter_opener_web"
 end
 
 group :test do

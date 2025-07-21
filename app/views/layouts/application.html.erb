@@ -23,24 +23,44 @@
   <body class="font-main min-h-screen flex flex-col ">
     <!-- Container central -->
     <div class="mt-10 mx-8 mb-8 font-title">
-      <%= link_to root_path, class:"flex" do %>
-        <div class="mr-3 inline-flex transition font-light text-gray-700 text-3xl
-      hover:scale-110 hover:text-main duration-200 cursor-pointer">
-          <% unless current_page?(root_path) %>
+      <%
+        show_arrow = !(current_page?(root_path) || (params[:pseudonym].present? && current_page?(user_albums_path(pseudonym: params[:pseudonym]))))
+        back_path = if params[:pseudonym].present?
+                      user_albums_path(pseudonym: params[:pseudonym])
+                    else
+                      '#'
+                    end
+      %>
+      <%= link_to back_path, class: "flex", onclick: (params[:pseudonym].present? ? nil : "window.history.back(); return false;") do %>
+        <div class="mr-3 inline-flex transition font-light text-gray-700 text-3xl hover:scale-110 hover:text-main duration-200 cursor-pointer">
+          <% if show_arrow %>
             &larr;
           <% else %>
             <span class="invisible select-none">&larr;</span>
           <% end %>
         </div>
         <h1 class="text-main-dark tracking-widest text-5xl translate-y-[2px]">foto</h1>
+        <h2 class="ml-3 text-gray-500 place-content-end text-2xl translate-y-[2px]">
+          <%=
+            if params[:pseudonym].present? && params[:pseudonym]!= "LsQnlt"
+              params[:pseudonym]
+            else
+              ""
+            end
+          %>
+        </h2>
       <% end %>
     </div>
     <div class="mt-8 mb-10 p-4 sm:px-18 bg-white/80 flex-1">
-      <% if notice %>
-        <div class="mb-6">
-          <p class="text-green-700 bg-green-100 px-4 py-2 rounded-lg shadow inline-block"><%= notice %></p>
+      <div class="relative">
+        <div id="flash" class="absolute z-50">
+          <div class="fixed mt-2 right-2 top-5 grid grid-cols-1 gap-4">
+            <% flash.each_with_index do |(type, message), index| %>
+              <%= render 'shared/flash', flash_type: type, message: message, index: index %>
+            <% end %>
+          </div>
         </div>
-      <% end %>
+      </div>
       <main>
         <%= yield %>
       </main>
