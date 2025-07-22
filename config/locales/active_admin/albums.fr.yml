@@ -13,3 +13,8 @@ fr:
         actions: "Actions"
       action:
         delete_photo: "Supprimer"
+      inputs:
+        password_protected: "Activer la protection par mot de passe"
+        password: "Mot de passe"
+      update:
+        success: "L'album a bien été mis à jour."

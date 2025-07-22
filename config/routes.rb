@@ -37,7 +37,11 @@ Rails.application.routes.draw do
   # Albums et photos
   scope '/:pseudonym', as: 'user' do
     get '/', to: 'albums#index', as: :albums # => user_albums_path(pseudonym: ...)
-    resources :albums, only: [:show]
+    resources :albums, only: [:show] do
+      member do
+        match 'verify_password', to: 'albums#verify_password', via: [:get, :post]
+      end
+    end
   end
 
   resources :photos, only: [] do

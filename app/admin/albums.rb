@@ -19,7 +19,7 @@
 #
 ActiveAdmin.register Album do
   # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, :published, :user_id, uploaded_photos: []
+  permit_params :title, :description, :published, :user_id, :password_protected, :password, uploaded_photos: []
 
   # or consider:
   #
@@ -57,6 +57,7 @@ ActiveAdmin.register Album do
     column :created_at
     column :updated_at
     column :published
+    column :password_protected
     actions
   end
 
@@ -69,6 +70,7 @@ ActiveAdmin.register Album do
       row :created_at
       row :updated_at
       row :published
+      row :password_protected
     end
 
     panel t('active_admin.albums.panel.photos') do
@@ -95,6 +97,10 @@ ActiveAdmin.register Album do
       f.input :description
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
       f.input :published
+      f.input :password_protected, label: t('active_admin.albums.inputs.password_protected')
+      if f.object.new_record? || !f.object.password_protected?
+        f.input :password, as: :string, input_html: { autocomplete: "new-password" }, label: t('active_admin.albums.inputs.password')
+      end
       if Current.user.has_role?(:admin)
         f.input :user_id,
           as: :select,
@@ -107,8 +113,6 @@ ActiveAdmin.register Album do
   end
 
   controller do
-    # Toutes les requêtes qui partent de Album (index, show, etc.)
-    # utiliseront maintenant le eager-loading et éviteront les N+1
     def scoped_collection
       policy_scope(Album).includes(photos: [image_attachment: :blob])
     end
@@ -119,6 +123,11 @@ ActiveAdmin.register Album do
         @album.user_id ||= Current.user.id
       else
         @album.user = Current.user
+      end
+      if permitted_params[:album][:password_protected] == "1"
+        @album.password = permitted_params[:album][:password]
+      else
+        @album.password_digest = nil
       end
 
       if @album.save
@@ -134,13 +143,21 @@ ActiveAdmin.register Album do
     end
 
     def update
-      super do |_success, _failure|
-        if params[:album][:uploaded_photos].present?
-          params[:album][:uploaded_photos].each do |uploaded_file|
-            resource.photos.create(image: uploaded_file)
+      params[:album][:password] = nil if params[:album][:password_protected] != "1"
+      super do |success, failure|
+        success.html do
+          if params[:album][:uploaded_photos].present?
+            params[:album][:uploaded_photos].each do |uploaded_file|
+              resource.photos.create(image: uploaded_file)
+            end
           end
+          flash[:notice] = t('active_admin.albums.update.success')
+          redirect_to resource_path(resource)
         end
-        redirect_to resource_path(resource) and return
+
+        failure.html do
+          render :edit
+        end
       end
     end
   end

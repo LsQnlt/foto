@@ -200,3 +200,6 @@ fr:
   photos:
     like:
       error: "Impossible de sauvegarder"
+  albums:
+    verify_password:
+      incorrect: "Mot de passe incorrect"
