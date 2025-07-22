@@ -10,6 +10,11 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_invitations_on_email  (email) UNIQUE
+#  index_invitations_on_token  (token) UNIQUE
+#
 require "test_helper"
 
 class InvitationTest < ActiveSupport::TestCase

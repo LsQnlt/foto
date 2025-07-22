@@ -3,6 +3,6 @@ class InviteMailer < ApplicationMailer
     @invitation = params[:invitation]
     @url = new_user_registration_url(token: @invitation.token)
 
-    mail(to: @invitation.email, subject: "Vous êtes invité à rejoindre l'app !")
+    mail(to: @invitation.email, subject: t('.subject'))
   end
 end

@@ -13,7 +13,8 @@ class RegistrationsController < ApplicationController
 
     if @user.save
       @invitation.mark_as_used!
-      redirect_to user_albums_path(pseudonym: @user.pseudonym), success: "Compte créé avec succès !"
+      flash[:success] = I18n.t('registrations.create.success')
+      redirect_to user_albums_path(pseudonym: @user.pseudonym)
     else
       flash[:alert] = @user.errors.full_messages.join(", ")
       render :new,  status: :unprocessable_entity
@@ -28,7 +29,7 @@ class RegistrationsController < ApplicationController
 
   def redirect_if_no_invitation
     unless @invitation
-      redirect_to root_path, alert: "Lien invalide ou expiré."
+      redirect_to root_path, alert: t('registrations.token.invalid')
       return
     end
   end

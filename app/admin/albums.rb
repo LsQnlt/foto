@@ -35,9 +35,9 @@ ActiveAdmin.register Album do
     photo = Photo.find_by(id: params[:photo_id], album_id: params[:album_id])
     if photo
       photo.destroy
-      redirect_back fallback_location: admin_album_path(params[:album_id]), notice: "Photo supprimée avec succès."
+      redirect_back fallback_location: admin_album_path(params[:album_id]), notice: t('active_admin.albums.flash.photo_deleted')
     else
-      redirect_back fallback_location: admin_album_path(params[:album_id]), alert: "Photo introuvable."
+      redirect_back fallback_location: admin_album_path(params[:album_id]), alert: t('active_admin.albums.flash.photo_not_found')
     end
   end
 
@@ -71,17 +71,17 @@ ActiveAdmin.register Album do
       row :published
     end
 
-    panel "Photos" do
+    panel t('active_admin.albums.panel.photos') do
       table_for album.photos do
         column :id
-        column "Photo" do |photo|
+        column t('active_admin.albums.column.photo') do |photo|
           image_tag photo.thumb_variant(method: :resize_to_fill), size: "400x300" if photo.image.attached?
         end
         column "Actions" do |photo|
-          link_to "Supprimer",
+          link_to t('active_admin.albums.action.delete_photo'),
             delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
             method: :delete,
-            data: { confirm: "Êtes-vous sûr de vouloir supprimer cette photo ?" }
+            data: { confirm: t('active_admin.albums.confirm.delete_photo') }
         end
       end
     end

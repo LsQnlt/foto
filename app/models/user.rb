@@ -19,6 +19,7 @@ class User < ApplicationRecord
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :albums, dependent: :destroy
+
   has_and_belongs_to_many :roles, join_table: :users_roles, before_add: :ensure_only_one_role
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }

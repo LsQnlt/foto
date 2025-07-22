@@ -10,6 +10,11 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
+# Indexes
+#
+#  index_invitations_on_email  (email) UNIQUE
+#  index_invitations_on_token  (token) UNIQUE
+#
 class Invitation < ApplicationRecord
   before_create :generate_token
 

@@ -149,6 +149,19 @@ fr:
       unset: Inconnu
       "yes": Oui
     view: Voir
+    albums:
+      flash:
+        photo_deleted: "Photo supprimée avec succès."
+        photo_not_found: "Photo introuvable."
+      confirm:
+        delete_photo: "Êtes-vous sûr de vouloir supprimer cette photo ?"
+      panel:
+        photos: "Photos"
+      column:
+        photo: "Photo"
+        actions: "Actions"
+      action:
+        delete_photo: "Supprimer"
   activerecord:
     attributes:
       active_admin/comment:
@@ -172,3 +185,18 @@ fr:
       long: "%B %d, %Y %H:%M"
       short: "%d %b %H:%M"
     pm: p.m.
+  invite_mailer:
+    invite_email:
+      subject: "Vous êtes invité à rejoindre l'application !"
+  sessions:
+    create:
+      rate_limit_alert: "Réessayez plus tard."
+      invalid_credentials: "Adresse e-mail ou mot de passe incorrect."
+  registrations:
+    create:
+      success: "Compte créé avec succès !"
+    token:
+      invalid: "Lien invalide ou expiré."
+  photos:
+    like:
+      error: "Impossible de sauvegarder"

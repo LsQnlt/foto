@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_154917) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_22_173040) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -95,6 +95,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_154917) do
     t.datetime "expires_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_invitations_on_email", unique: true
+    t.index ["token"], name: "index_invitations_on_token", unique: true
   end
 
   create_table "photos", force: :cascade do |t|

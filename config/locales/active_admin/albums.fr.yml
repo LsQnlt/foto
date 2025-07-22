@@ -1,0 +1,15 @@
+fr:
+  active_admin:
+    albums:
+      flash:
+        photo_deleted: "Photo supprimée avec succès."
+        photo_not_found: "Photo introuvable."
+      confirm:
+        delete_photo: "Êtes-vous sûr de vouloir supprimer cette photo ?"
+      panel:
+        photos: "Photos"
+      column:
+        photo: "Photo"
+        actions: "Actions"
+      action:
+        delete_photo: "Supprimer"

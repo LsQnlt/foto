@@ -9,13 +9,13 @@ class PhotosController < ApplicationController
       return
     end
 
-    @photo.increment!(:likes_count)
+    @photo.likes_count += 1
 
     if @photo.save
       session[:liked_photos] << @photo.id
       render json: { likes_count: @photo.likes_count, liked: true }
     else
-      render json: { error: "Impossible de sauvegarder" }, status: :unprocessable_entity
+      render json: { error: I18n.t('photos.like.error') }, status: :unprocessable_entity
     end
   end
 
