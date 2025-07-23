@@ -163,6 +163,9 @@ fr:
       action:
         delete_photo: "Supprimer"
   activerecord:
+    errors:
+      user:
+        invalid: "doit uniquement contenir des lettres, chiffres, tirets ou underscores"
     attributes:
       active_admin/comment:
         author_type: Type d'auteur

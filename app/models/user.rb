@@ -15,6 +15,8 @@
 #  index_users_on_pseudonym      (pseudonym) UNIQUE
 #
 class User < ApplicationRecord
+  VALID_PSEUDONYM_REGEX = /\A[a-zA-Z0-9_-]+\z/
+
   rolify
   has_secure_password
   has_many :sessions, dependent: :destroy
@@ -23,7 +25,7 @@ class User < ApplicationRecord
   has_and_belongs_to_many :roles, join_table: :users_roles, before_add: :ensure_only_one_role
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
-  validates :pseudonym, presence: true, uniqueness: true
+  validates :pseudonym, presence: true, uniqueness: true, format: { with: VALID_PSEUDONYM_REGEX, message: I18n.t("activerecord.errors.user.invalid") }
   validates :email_address, presence: true, uniqueness: true
   validates :password, length: { minimum: 8 }, if: -> { new_record? || !password.nil? }
 
