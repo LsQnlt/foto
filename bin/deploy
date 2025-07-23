@@ -8,6 +8,6 @@ if [ -f .env ]; then
   source .env
   set +a
 fi
-
+echo "$@"
 # Passe tous les arguments à la vraie commande kamal
 bundle exec kamal "$@"
