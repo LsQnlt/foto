@@ -1,0 +1,5 @@
+fr:
+  active_admin:
+    users:
+      authorize_create:
+        error: "Vous n'êtes pas autorisé à créer un utilisateur."

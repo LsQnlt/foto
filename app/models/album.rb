@@ -28,7 +28,7 @@ class Album < ApplicationRecord
   has_one :cover_photo, -> { order(created_at: :asc) }, class_name: 'Photo'
 
   accepts_nested_attributes_for :photos, allow_destroy: true
-  validates :password, presence: true, if: -> { password_protected? }
+  validates :password, presence: true, if: -> { password_protected? && (new_record? || password.present?) }
 
   attr_accessor :uploaded_photos
 

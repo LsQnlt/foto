@@ -98,9 +98,11 @@ ActiveAdmin.register Album do
       f.input :uploaded_photos, as: :file, input_html: { multiple: true }
       f.input :published
       f.input :password_protected, label: t('active_admin.albums.inputs.password_protected')
-      if f.object.new_record? || !f.object.password_protected?
-        f.input :password, as: :string, input_html: { autocomplete: "new-password" }, label: t('active_admin.albums.inputs.password')
-      end
+      f.input :password,
+        as: :string,
+        input_html: { autocomplete: "new-password" },
+        hint: f.object.persisted? && f.object.password_protected? ? t('active_admin.albums.inputs.password_optional') : nil,
+        label: t('active_admin.albums.inputs.password')
       if Current.user.has_role?(:admin)
         f.input :user_id,
           as: :select,

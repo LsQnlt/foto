@@ -14,6 +14,7 @@ fr:
       action:
         delete_photo: "Supprimer"
       inputs:
+        password_optional: "Laissez vide pour conserver l'actuel mot de passe"
         password_protected: "Activer la protection par mot de passe"
         password: "Mot de passe"
       update:

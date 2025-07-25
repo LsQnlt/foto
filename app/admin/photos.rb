@@ -75,7 +75,7 @@ ActiveAdmin.register Photo do
     f.semantic_errors(*f.object.errors.attribute_names)
     f.inputs do
       f.input :image, as: :file
-      f.input :album
+      f.input :album, collection: policy_scope(Album)
     end
     f.actions
   end

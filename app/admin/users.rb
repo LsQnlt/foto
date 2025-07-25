@@ -14,7 +14,7 @@
 #
 ActiveAdmin.register User do
   # Specify parameters which should be permitted for assignment
-  permit_params :email_address, :password_digest
+  permit_params :email_address, :pseudonym
 
   # or consider:
   #
@@ -30,7 +30,6 @@ ActiveAdmin.register User do
   # Add or remove filters to toggle their visibility
   filter :id
   filter :email_address
-  filter :password_digest
   filter :created_at
   filter :updated_at
 
@@ -39,9 +38,9 @@ ActiveAdmin.register User do
     selectable_column
     id_column
     column :email_address
-    column :password_digest
     column :created_at
     column :updated_at
+    column :pseudonym
     actions
   end
 
@@ -50,7 +49,7 @@ ActiveAdmin.register User do
     attributes_table_for(resource) do
       row :id
       row :email_address
-      row :password_digest
+      row :pseudonym
       row :created_at
       row :updated_at
     end
@@ -58,17 +57,27 @@ ActiveAdmin.register User do
 
   # Add or remove fields to toggle their visibility in the form
   form do |f|
-    f.semantic_errors(*f.object.errors.attribute_names)
+    f.semantic_errors
     f.inputs do
       f.input :email_address
-      f.input :password_digest
+      f.input :pseudonym
     end
     f.actions
   end
 
   controller do
+    before_action :authorize_create!, only: [:new, :create]
     def scoped_collection
       policy_scope(User)
+    end
+
+    private
+
+    def authorize_create!
+      unless Current.user.has_role?(:admin)
+        flash[:error] = t('active_admin.users.authorize_create.error')
+        redirect_to admin_users_path
+      end
     end
   end
 end

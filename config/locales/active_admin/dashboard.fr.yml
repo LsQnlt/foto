@@ -1,0 +1,5 @@
+fr:
+  active_admin:
+    dashboard_welcome:
+      welcome: "Bienvenu sur l'espace d'administration de votre page foto.rip."
+      call_to_action: "Retrouvez tout les tutoriels pour utiliser cette partie de l'app sur: "
