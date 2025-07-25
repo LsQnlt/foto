@@ -12,6 +12,15 @@ ActiveAdmin.register_page "Dashboard" do
       end
     end
 
+    panel "Votre page photo", class: "mt-6" do
+      pseudonym = Current.user.pseudonym # ou current_user.slug selon ton modèle
+      url = Rails.application.routes.url_helpers.user_albums_url(pseudonym: pseudonym, host: request.base_url)
+
+      para do
+        text_node "Voici le lien vers votre page photo : "
+        a url, href: url, target: "_blank"
+      end
+    end
     # Here is an example of a simple dashboard with columns and panels.
     #
     # columns do
