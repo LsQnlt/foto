@@ -1,5 +1,5 @@
 class AlbumsController < ApplicationController
-  allow_unauthenticated_access only: [:index, :show]
+  allow_unauthenticated_access
   before_action :set_user
   before_action :set_album, only: [:show]
   before_action :redirect_unless_unlocked, only: [:show]
