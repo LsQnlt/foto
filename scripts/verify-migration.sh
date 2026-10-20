@@ -194,7 +194,7 @@ stage_post_kill() {
     if [ -n "$base_size" ] && [ "$base_size" = "$(vol_size)" ]; then
       ok "Taille du volume identique à la baseline (${base_size})"
     elif [ -n "$base_size" ]; then
-      fail "La taille du volume a changé (baseline ${base_size} vs ${base_files:-?} fichiers) → vérifie !"
+      fail "La taille du volume a changé (baseline ${base_size} vs $(vol_size) actuel) → vérifie !"
     else
       info "Pas de baseline pour comparaison stricte."
     fi

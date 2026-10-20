@@ -38,7 +38,7 @@ En contrepartie, on travaille **à chaud** sur la seule machine de prod : le **b
 | 5 | Déployer `foto` en rattachant le volume existant | UI Coolify |
 | 6 | Vérifier le site | `verify-migration.sh app` |
 | 7 | Vérifier l'intégrité des données | `verify-migration.sh data` |
-| 8 | Ajouter `louis.dev` / `coolify.louis.dev` (et SSL) | UI Coolify |
+| 8 | Ajouter `lsqnlt.dev` / `coolify.lsqnlt.dev` (et SSL) | UI Coolify |
 
 > Les deux scripts `kill-kamal.sh` et `verify-migration.sh` sont à copier sur le VPS d'abord :
 > ```bash
@@ -140,7 +140,9 @@ Attendu : conteneurs Coolify/Traefik qui tournent, ports 8000/443/80 en écoute,
 Puis, dans l'UI :
 1. Ouvrir `http://<IP>:8000`, se connecter (`root@localhost` + mdp affiché)
 2. Changer le mot de passe root
-3. (Optionnel) configurer le domaine du panel : `coolify.louis.dev`
+3. (Optionnel) configurer le domaine du panel : `coolify.lsqnlt.dev`
+
+> ℹ️ Le TLD `.dev` est sur la **HSTS preload list** : les navigateurs refusent tout accès HTTP. Coolify gère automatiquement le SSL (Let's Encrypt) via Traefik — c'est transparent.
 
 ---
 
@@ -169,7 +171,9 @@ Dans Coolify : **Projects → Create Project (`foto`)** → **Add Resource → A
 
 **Domaines & SSL** :
 - Ajouter `foto.rip` (le domaine final) + SSL Let's Encrypt activé
-- (Optionnel, temporaire) `foto.louis.dev`
+- (Optionnel, temporaire) `foto.lsqnlt.dev`
+
+> ⚠️ Tous les domaines en `.dev` **doivent** avoir HTTPS actif. Coolify/Traefik demande et renouvelle les certificats Let's Encrypt automatiquement.
 
 **Deploy.**
 
@@ -213,22 +217,24 @@ docker exec -it <CONTENEUR_FOTO> bin/rails runner \
 ## Phase 8 — Domaines supplémentaires
 
 Une fois `foto.rip` validé :
-- Ajouter `coolify.louis.dev` (domaine du panel) + SSL
-- Ajouter `louis.dev` (→ future app blog) + `*.louis.dev` en wildcard si besoin
+- Ajouter `coolify.lsqnlt.dev` (domaine du panel) + SSL
+- Ajouter `lsqnlt.dev` (→ future app blog) + `*.lsqnlt.dev` en wildcard si besoin
 - Enregistrements DNS à créer chez le registrar (A → `54.36.100.76`) :
   ```
-  A  coolify.louis.dev  →  54.36.100.76
-  A  louis.dev          →  54.36.100.76
-  A  *.louis.dev        →  54.36.100.76
+  A  coolify.lsqnlt.dev  →  54.36.100.76
+  A  lsqnlt.dev          →  54.36.100.76
+  A  *.lsqnlt.dev        →  54.36.100.76
   ```
   (`foto.rip` existe déjà, ne pas y toucher.)
+
+> 🔒 Rappel `.dev` : le navigateur bloquera tout accès non-HTTPS. Heureusement Coolify gère le SSL (Let's Encrypt) automatiquement dès que le domaine est ajouté.
 
 ---
 
 ## 🔐 Checklist sécurité post-migration
 
 - [ ] Mot de passe root Coolify changé et fort
-- [ ] SSL actif sur `coolify.louis.dev`, `foto.rip`, `louis.dev`
+- [ ] SSL actif sur `coolify.lsqnlt.dev`, `foto.rip`, `lsqnlt.dev`
 - [ ] Variables d'env secrètes cochées "Secret" dans Coolify
 - [ ] Backups locaux conservés ≥ 30 jours (`~/foto-migration-backups`)
 - [ ] Firewall UFW actif (SSH + 80/443 + 8000)
