@@ -1,7 +1,11 @@
 # Migration Foto → Coolify (nouveau VPS + nouveau domaine)
 
-> **Statut** : Plan d'attaque — Phase 0 prête à exécuter  
-> **Objectif** : Migrer l'app Rails `foto` de Kamal 2 (VPS OVH actuel) vers Coolify sur un nouveau VPS OVH, sans perte de données.
+> ⚠️ **Mise à jour — décision actuelle** : on **garde le VPS actuel** (`54.36.100.76`) au lieu d'en souscrire un nouveau. Le chemin recommandé est désormais la **migration in-place** → voir [`docs/migration-coolify-inplace.md`](./migration-coolify-inplace.md).
+>
+> Ce document ci-dessous reste valable comme **variante « nouveau VPS »** (utile si on re-dimensionne ou si on bascule de zone un jour).
+
+> **Statut** : Variante secondaire (nouveau VPS) — conservée pour référence  
+> **Objectif d'origine** : Migrer l'app Rails `foto` de Kamal 2 (VPS OVH actuel) vers Coolify sur un nouveau VPS OVH, sans perte de données.
 
 ---
 
