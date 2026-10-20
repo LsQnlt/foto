@@ -15,7 +15,7 @@ VPS OVH (54.36.100.76) — Ubuntu 24.04 LTS
 │   └── Traefik (reverse proxy + SSL Let's Encrypt)
 │
 └── App "foto"
-    ├── Image Docker : lsqnlt/foto:latest
+    ├── Image Docker : lsqnlt/coolify:latest
     ├── Volume persistant : foto-storage → /rails/storage
     │   ├── SQLite (4 bases : production, cache, queue, cable)
     │   └── Active Storage (6200+ fichiers, ~3.5 Go)
@@ -96,7 +96,7 @@ git push origin main
 
 **Cause** : `bundle install` + `assets:precompile` + `docker build` consomment facilement 2–3 Go de RAM. Le VPS n'a que 2 Go. Le système swap à mort puis freeze.
 
-**Solution adoptée** : Passer en mode **Docker Image** dans Coolify (`lsqnlt/foto:latest`) au lieu de builder depuis le repo.
+**Solution adoptée** : Passer en mode **Docker Image** dans Coolify (`lsqnlt/coolify:latest`) au lieu de builder depuis le repo.
 
 **Leçon** : **Un VPS pour builder des images Rails doit avoir 4 Go de RAM minimum.** Pour 2 Go, utiliser uniquement des images pré-buildées (Docker Hub).
 
@@ -106,7 +106,7 @@ git push origin main
 
 **Symptôme** : `pull access denied for lsqnlt/foto, repository does not exist or may require 'docker login'`
 
-**Cause** : L'image `lsqnlt/foto:latest` était en mode **Private** sur Docker Hub.
+**Cause** : L'image `lsqnlt/coolify:latest` était en mode **Private** sur Docker Hub.
 
 **Solution** : Passer l'image en **Public** sur Docker Hub (Settings → Visibility → Public).
 
@@ -200,7 +200,7 @@ chmod 600 ~/.ssh/config
 
 ```bash
 # 1. Connexion et maj
-ssh foto
+ssh coolify
 sudo apt update && sudo apt upgrade -y
 # NOTE : si le kernel a changé, rebooter :
 # sudo reboot
@@ -211,16 +211,16 @@ sudo bash -c 'curl -fsSL https://cdn.coollabs.io/coolify/install.sh | bash'
 # Créer immédiatement le compte admin dans l'UI
 
 # 3. Backup de l'env Coolify (en local, depuis un autre terminal)
-ssh foto "sudo cat /data/coolify/source/.env" > ~/foto-migration-backups/coolify-env-backup
+ssh coolify "sudo cat /data/coolify/source/.env" > ~/foto-migration-backups/coolify-env-backup
 
 # 4. Créer le volume Docker et restaurer les données
-ssh foto "sudo docker volume create foto-storage"
-scp ~/foto-migration-backups/foto_storage.tar.gz foto:/var/tmp/
-ssh foto "sudo docker run --rm -v foto-storage:/data -v /var/tmp:/backup alpine tar xzf /backup/foto_storage.tar.gz -C /data"
-ssh foto "sudo docker run --rm -v foto-storage:/data alpine chown -R 1000:1000 /data"
+ssh coolify "sudo docker volume create foto-storage"
+scp ~/foto-migration-backups/foto_storage.tar.gz coolify:/var/tmp/
+ssh coolify "sudo docker run --rm -v foto-storage:/data -v /var/tmp:/backup alpine tar xzf /backup/foto_storage.tar.gz -C /data"
+ssh coolify "sudo docker run --rm -v foto-storage:/data alpine chown -R 1000:1000 /data"
 
 # 5. Vérifier la restauration
-ssh foto "sudo docker run --rm -v foto-storage:/data alpine sh -c 'du -sh /data && ls /data/*.sqlite3'"
+ssh coolify "sudo docker run --rm -v foto-storage:/data alpine sh -c 'du -sh /data && ls /data/*.sqlite3'"
 # Attendu : 3.5G + production.sqlite3, production_cache.sqlite3, production_queue.sqlite3, production_cable.sqlite3
 ```
 
@@ -231,7 +231,7 @@ ssh foto "sudo docker run --rm -v foto-storage:/data alpine sh -c 'du -sh /data 
 1. **Projects** → **Create Project** (nom : `foto`)
 2. **Add Resource** → **Application**
 3. **Source** : `Docker Image` (PAS Public Repository si le serveur a peu de RAM)
-4. **Image** : `lsqnlt/foto:latest`
+4. **Image** : `lsqnlt/coolify:latest`
 5. **Build** :
    - Base Directory : `/`
    - Dockerfile location : laisser par défaut (pas utilisé en mode Docker Image)
@@ -285,7 +285,7 @@ dig coolify.lsqnlt.dev +short
 
 ```bash
 # Sur le serveur
-ssh foto
+ssh coolify
 sudo docker run --rm -v foto-storage:/data alpine sh -c '
   echo "Fichiers : $(find /data -type f | wc -l)"
   echo "Taille : $(du -sh /data)"
@@ -299,7 +299,7 @@ sudo docker run --rm -v foto-storage:/data alpine sh -c '
 ### Vérifier les logs de l'app
 
 ```bash
-ssh foto "sudo docker logs \\\$(sudo docker ps -q --filter ancestor=lsqnlt/foto:latest | head -1) --tail 50"
+ssh coolify "sudo docker logs \\\$(sudo docker ps -q --filter ancestor=lsqnlt/coolify:latest | head -1) --tail 50"
 ```
 
 ### Redéployer (si nouvelle image pushée)
@@ -308,7 +308,7 @@ Depuis l'UI Coolify : bouton **Redeploy**.
 
 Ou forcer un pull :
 ```bash
-ssh foto "sudo docker pull lsqnlt/foto:latest"
+ssh coolify "sudo docker pull lsqnlt/coolify:latest"
 # puis Redeploy dans l'UI
 ```
 

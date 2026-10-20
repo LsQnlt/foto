@@ -31,5 +31,5 @@ chmod 600 ~/.ssh/config
 echo "✅ Alias 'foto' créé dans ~/.ssh/config"
 
 echo ""
-echo "🧪 Teste maintenant: ssh foto"
+echo "🧪 Teste maintenant: ssh coolify"
 echo "   (ça doit te connecter SANS mot de passe)"
