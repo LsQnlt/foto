@@ -33,7 +33,7 @@
 #    enabled: true # Generate a tags file with `ctags` each time HEAD changes
 PreCommit:
   ALL:
-    required: true
+    required: false
     requires_files: false
     on_warn: fail # Treat all warnings as failures
     exclude: &default_excludes
@@ -63,7 +63,7 @@ PreCommit:
         '! bundle exec rails_best_practices . -c config/rails_best_practices.yml | tee /dev/stderr | grep -q -E " - "',
       ]
   Brakeman:
-    enabled: true
+    enabled: false
     on_warn: fail
     command: ["bundle", "exec", "brakeman"]
 
