@@ -233,7 +233,12 @@ Une fois `foto.rip` validé :
 
 ## 🔐 Checklist sécurité post-migration
 
-- [ ] Mot de passe root Coolify changé et fort
+- [ ] **Compte admin Coolify créé immédiatement** (premier arrivé = root, sécurise vite)
+- [ ] **Backup de `/data/coolify/source/.env` en local** :
+  ```bash
+  scp foto:/data/coolify/source/.env ~/foto-migration-backups/coolify-env-backup
+  ```
+- [ ] Mot de passe admin Coolify fort
 - [ ] SSL actif sur `coolify.lsqnlt.dev`, `foto.rip`, `lsqnlt.dev`
 - [ ] Variables d'env secrètes cochées "Secret" dans Coolify
 - [ ] Backups locaux conservés ≥ 30 jours (`~/foto-migration-backups`)
