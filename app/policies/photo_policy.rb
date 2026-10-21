@@ -2,7 +2,7 @@
 
 class PhotoPolicy < ApplicationPolicy
   def create?
-    admin? || (record.album.present? && record.album.user_id == user&.id)
+    admin? || (user.present? && record.album&.user_id == user.id)
   end
 
   def update?

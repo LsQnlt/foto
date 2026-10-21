@@ -59,7 +59,7 @@
 | 0.1 | ✅ Secrets retirés des docs. **Reste à faire (toi)** : créer une nouvelle clé SMTP Brevo et la mettre dans Coolify (`SMTP_USERNAME` / `SMTP_PASSWORD`). D'ici là, **les invitations ne partent pas en prod**. | `docs/migration-*.md` |
 | 0.2 | ✅ Fixtures réécrites (admin/alice/bob, albums publics/brouillon/protégé, invitations valide/utilisée/expirée, photos avec vraies images). | `test/fixtures/**` |
 | 0.3 | ✅ Tests des parcours critiques : modèles, albums publics et protégés, likes, connexion, inscription par invitation, mail d'invitation, policies Pundit, admin (pages, droits, création d'album avec photos), `OptimizePhotoJob`. | `test/**` |
-| 0.4 | ✅ CI : ajout de `libvips` + `imagemagick`, nécessaires aux tests du job. En local : `sudo dnf install vips`, sinon ces 2 tests sont ignorés. | `.github/workflows/ci.yml` |
+| 0.4 | ✅ CI : ajout de `libvips`, nécessaire aux tests du job. En local : `sudo dnf install vips`, sinon ces 2 tests sont ignorés. | `.github/workflows/ci.yml` |
 
 > 🎯 **Fin du jalon 0** : tests verts en local et en CI.
 

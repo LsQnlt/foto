@@ -35,14 +35,6 @@ class Photo < ApplicationRecord
     ["album", "image_attachment", "image_blob"]
   end
 
-  def lightbox_variant(method: nil) # See PhotoVariants
-    method.present? ? photo_variant(self, :lightbox, method:) : photo_variant(self, :lightbox)
-  end
-
-  def thumb_variant(method: nil) # See PhotoVariants
-    method.present? ? photo_variant(self, :thumb, method:) : photo_variant(self, :thumb)
-  end
-
   private
 
   def generate_variants_async

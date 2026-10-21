@@ -58,7 +58,6 @@ class AlbumsController < ApplicationController
   # Un brouillon n'existe pas pour le public : 404, sauf pour son propriétaire ou un admin
   def set_album
     @album = @user.albums.includes(:photos).find(params[:id])
-    resume_session
     raise ActiveRecord::RecordNotFound unless policy(@album).show?
   end
 end

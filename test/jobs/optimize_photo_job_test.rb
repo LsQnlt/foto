@@ -15,8 +15,7 @@ class OptimizePhotoJobTest < ActiveJob::TestCase
     photo.reload
     assert_equal "image/webp", photo.image.content_type
     assert_equal "photo.webp", photo.image.filename.to_s
-    assert photo.thumb_variant(method: :resize_to_fill).send(:processed?)
-    assert photo.lightbox_variant(method: :resize_to_limit).send(:processed?)
+    assert_equal 2, photo.image.blob.variant_records.count
   end
 
   test "ignores a photo that no longer exists" do

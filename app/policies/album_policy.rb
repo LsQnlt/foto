@@ -6,7 +6,7 @@ class AlbumPolicy < ApplicationPolicy
   end
 
   def create?
-    admin? || record.user_id == user&.id
+    admin? || (user.present? && record.user_id == user.id)
   end
 
   def update?

@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
+    resume_session
     Current.user
   end
 

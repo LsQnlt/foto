@@ -18,18 +18,9 @@
 #  user_id  (user_id => users.id)
 #
 ActiveAdmin.register Album do
-  # Specify parameters which should be permitted for assignment
   permit_params do
     policy(Album).permitted_attributes
   end
-
-  # or consider:
-  #
-  # permit_params do
-  #   permitted = [:title, :description, :user_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
 
   # For security, limit the actions that should be available
   actions :all, except: []
@@ -128,11 +119,7 @@ ActiveAdmin.register Album do
 
     def create
       @album = Album.new(permitted_params[:album])
-      if Current.user.has_role?(:admin)
-        @album.user_id ||= Current.user.id
-      else
-        @album.user = Current.user
-      end
+      @album.user_id ||= Current.user.id
       if permitted_params[:album][:password_protected] == "1"
         @album.password = permitted_params[:album][:password]
       else
