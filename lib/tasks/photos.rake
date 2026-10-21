@@ -59,12 +59,12 @@ namespace :photos do
   desc "Supprime les fichiers Active Storage rattachés à aucun enregistrement (DRY-RUN par défaut, CONFIRM=1 pour supprimer)"
   task purge_unattached_blobs: :environment do
     confirm = ENV["CONFIRM"] == "1"
-    blobs = ActiveStorage::Blob.unattached.where(created_at: ...1.day.ago)
+    blobs = PurgeUnattachedBlobsJob.candidates
     count = blobs.count
     size_mb = (blobs.sum(:byte_size).to_f / 1.megabyte).round(1)
 
     if confirm
-      blobs.find_each(&:purge)
+      PurgeUnattachedBlobsJob.perform_now
       puts "🗑️  #{count} blob(s) non rattaché(s) supprimé(s) (#{size_mb} Mo libérés)."
     else
       puts "DRY-RUN : #{count} blob(s) non rattaché(s) à supprimer (#{size_mb} Mo). Relancer avec CONFIRM=1 pour supprimer."
