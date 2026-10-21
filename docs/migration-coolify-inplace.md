@@ -155,7 +155,7 @@ Dans Coolify : **Projects → Create Project (`foto`)** → **Add Resource → A
 | Clé | Valeur | Secret ? |
 |-----|--------|----------|
 | `RAILS_MASTER_KEY` | (celle de `.kamal/secrets`) | ✅ |
-| `SMTP_USERNAME` | `92e38f001@smtp-brevo.com` | ✅ |
+| `SMTP_USERNAME` | (depuis Brevo) | ✅ |
 | `SMTP_PASSWORD` | (celle de `.kamal/secrets`) | ✅ |
 | `RAILS_ENV` | `production` | ❌ |
 | `SOLID_QUEUE_IN_PUMA` | `true` | ❌ |
