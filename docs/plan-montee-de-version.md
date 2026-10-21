@@ -27,7 +27,7 @@
 
 1. ~~**Les tests sont tous en erreur** (16/16)~~ → ✅ corrigé (jalon 0.2) : 58 tests, 144 assertions, tous verts.
    Il y avait deux fixtures avec le même `token`, et les tests de scaffold visaient des routes qui n'existent pas.
-2. **Incohérence dans le traitement d'images** : `config/application.rb` force `variant_processor = :mini_magick`, alors que `OptimizePhotoJob` utilise déjà Vips (commit `faca7e2`). Le Dockerfile installe les deux (`libvips` + `imagemagick`).
+2. ✅ **Incohérence dans le traitement d'images** (mini_magick pour les variantes, Vips dans le job) : réglée au jalon A, tout passe par Vips.
 3. **Secret exposé** : le mot de passe SMTP Brevo était en clair dans `docs/migration-coolify.md` (commit `65380b3`, poussé sur `origin/main`). → Les secrets sont retirés des docs. La clé est **déjà désactivée côté Brevo**, donc pas besoin de réécrire l'historique. Il faut créer une nouvelle clé (voir 0.1).
 4. **Déploiement** : Coolify est désormais branché sur GitHub, et **chaque push sur `main` déclenche un déploiement**. Docker Hub n'est plus utilisé. Conséquences :
    - le merge sur `main` *est* la mise en prod : on ne merge qu'une fois la CI verte, car Coolify n'attend pas la CI ;
@@ -37,7 +37,7 @@
 8. ✅ **`rails_best_practices` plantait** (hook overcommit silencieux) : symboles nus dans le YAML et mauvais format pour `except_methods` (`"Classe#méthode"`). Corrigé, mis à jour en 1.23.4, et ajouté au job `lint` de la CI. Ses alertes ont permis de supprimer 7 routes CRUD `photos` inutilisées (elles pointaient vers des actions inexistantes) et de passer à `destroy!` dans l'admin et les tâches rake.
    Bug de la gem à connaître : un appel sans parenthèses avec un double splat nu (`skip_before_action :x, **options`) lui fait perdre le fil du module courant, et les méthodes privées des contrôleurs analysés ensuite (ordre alphabétique) sont signalées à tort comme inutilisées. Dans `Authentication`, l'appel est donc parenthésé, avec un commentaire.
 5. Les migrations tournent automatiquement au démarrage (`bin/docker-entrypoint` → `db:prepare`) sur les **4 bases SQLite de prod**. Toute migration ajoutée par une gem (solid_queue, solid_cable, active_storage…) s'exécutera en prod dès le déploiement.
-6. Restes à nettoyer : `package.json` (ESLint/Vue/Vite/husky, alors que l'app tourne avec importmap), `node_modules/`, `.kamal/`, `config/deploy.yml`, `bin/kamal`, `bin/deploy`.
+6. ✅ Restes nettoyés au jalon A : `package.json`, `.kamal/`, `config/deploy.yml`, `bin/kamal`, `bin/deploy`.
 
 ---
 
@@ -98,13 +98,14 @@ sudo docker exec -it <CONTENEUR_FOTO> bin/rails photos:purge_orphan_files       
 
 > ⚠️ Ne **pas** lancer `photos:process_all` : cette tâche relance `OptimizePhotoJob`, qui réencode les originaux une fois de plus (perte de qualité) et invalide toutes les variantes.
 
-### Jalon A — Nettoyage (pas de risque fonctionnel)
+### Jalon A — Nettoyage ✅
 
 | # | Étape |
 |---|-------|
-| A.1 | Retirer Kamal : gem `kamal`, `config/deploy.yml`, `.kamal/`, `bin/kamal`, `bin/deploy`. Mettre à jour les commentaires du Dockerfile et la section Rollback de `migration-coolify-inplace.md`, qui renvoie vers `bin/kamal deploy`. |
-| A.2 | Choisir **un seul** processeur d'images. Je recommande **Vips** : c'est le défaut Rails, il est déjà utilisé dans le job, plus rapide et moins gourmand en RAM (utile sur un VPS de 2 Go). Concrètement : supprimer la ligne `variant_processor`, la gem `mini_magick` et `imagemagick` du Dockerfile. Les variantes existantes restent valides. |
-| A.3 | Faire le tri dans `package.json`/`yarn.lock` : ne garder que ce qui sert réellement, ou tout supprimer si rien n'est utilisé. |
+| A.1 | ✅ Kamal retiré : gem, `config/deploy.yml`, `.kamal/`, `bin/kamal`, `bin/deploy`, `.env.example`. L'ancienne config reste dans l'historique (commit `ea4fc15`). Docs (`INSTALL.md`, `README.md`, rollback de `migration-coolify-inplace.md`) mises à jour pour Coolify. Les scripts `scripts/*.sh` de la migration sont conservés comme trace. |
+| A.2 | ✅ Vips seul : ligne `variant_processor = :mini_magick` supprimée (Vips est le défaut Rails), gem `mini_magick` retirée du Gemfile (elle reste dans le lock comme dépendance d'`image_processing`), `imagemagick` retiré du Dockerfile et de la CI. Les variantes existantes restent valides : la clé de variante ne dépend pas du processeur. |
+| A.3 | ✅ `package.json` supprimé : l'app n'utilise pas Node (importmap + tailwindcss-rails), et les scripts ESLint/Prettier référençaient des configs inexistantes. `hello_controller.js` (scaffold Stimulus inutilisé) supprimé. En local : `rm -rf node_modules yarn.lock .env` (fichiers ignorés par git, plus utilisés). |
+| A.4 | ✅ `photos:process_all` supprimée : elle ré-encodait tous les originaux WebP (perte de qualité) et invalidait toutes les variantes. |
 
 ### Jalon B — Gems sans changement majeur (Ruby 3.2, Rails 8.0)
 
