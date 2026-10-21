@@ -36,7 +36,7 @@ class Photo < ApplicationRecord
   end
 
   def lightbox_variant(method: nil) # See PhotoVariants
-    method.present? ? photo_variant(self, :lightbox_variant, method:) : photo_variant(self, :lightbox_variant)
+    method.present? ? photo_variant(self, :lightbox, method:) : photo_variant(self, :lightbox)
   end
 
   def thumb_variant(method: nil) # See PhotoVariants
