@@ -22,12 +22,31 @@
 #
 #  user_id  (user_id => users.id)
 #
-one:
-  title: MyString
-  description: MyText
-  user: one
+alice_public:
+  title: Vacances
+  description: Un album publié
+  user: alice
+  published: true
+  password_protected: false
 
-two:
-  title: MyString
-  description: MyText
-  user: two
+alice_draft:
+  title: Brouillon
+  description: Un album non publié
+  user: alice
+  published: false
+  password_protected: false
+
+alice_protected:
+  title: Privé
+  description: Un album protégé par mot de passe
+  user: alice
+  published: true
+  password_protected: true
+  password_digest: <%= BCrypt::Password.create("secret123") %>
+
+bob_public:
+  title: Montagne
+  description: Un album de Bob
+  user: bob
+  published: true
+  password_protected: false

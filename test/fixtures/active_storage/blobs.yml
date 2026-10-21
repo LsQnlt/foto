@@ -1,0 +1,2 @@
+alice_public_photo_blob: <%= ActiveStorage::FixtureSet.blob filename: "photo.jpg", service_name: "test" %>
+bob_public_photo_blob: <%= ActiveStorage::FixtureSet.blob filename: "photo2.jpg", service_name: "test" %>

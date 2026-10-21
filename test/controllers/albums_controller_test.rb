@@ -1,48 +1,51 @@
 require "test_helper"
 
 class AlbumsControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @album = albums(:one)
+  test "root redirects to the owner's albums" do
+    get root_url
+    assert_redirected_to "/LsQnlt"
   end
 
-  test "should get index" do
-    get albums_url
+  test "index lists only the user's published albums" do
+    get user_albums_url(pseudonym: "alice")
     assert_response :success
+    assert_includes response.body, albums(:alice_public).title
+    assert_not_includes response.body, albums(:alice_draft).title
+    assert_not_includes response.body, albums(:bob_public).title
   end
 
-  test "should get new" do
-    get new_album_url
+  test "index returns 404 for an unknown pseudonym" do
+    get user_albums_url(pseudonym: "inconnu")
+    assert_response :not_found
+  end
+
+  test "shows a public album" do
+    get user_album_url(albums(:alice_public), pseudonym: "alice")
     assert_response :success
+    assert_includes response.body, albums(:alice_public).title
   end
 
-  test "should create album" do
-    assert_difference("Album.count") do
-      post albums_url, params: { album: { description: @album.description, title: @album.title, user_id: @album.user_id } }
-    end
-
-    assert_redirected_to album_url(Album.last)
+  test "protected album redirects to the password page" do
+    album = albums(:alice_protected)
+    get user_album_url(album, pseudonym: "alice")
+    assert_redirected_to verify_password_user_album_path(album, pseudonym: "alice")
   end
 
-  test "should show album" do
-    get album_url(@album)
+  test "wrong password is refused" do
+    album = albums(:alice_protected)
+    post verify_password_user_album_url(album, pseudonym: "alice"), params: { password: "wrong" }
+    assert_response :unprocessable_entity
+
+    get user_album_url(album, pseudonym: "alice")
+    assert_redirected_to verify_password_user_album_path(album, pseudonym: "alice")
+  end
+
+  test "right password unlocks the album for the session" do
+    album = albums(:alice_protected)
+    post verify_password_user_album_url(album, pseudonym: "alice"), params: { password: "secret123" }
+    assert_redirected_to user_album_path(album, pseudonym: "alice")
+
+    get user_album_url(album, pseudonym: "alice")
     assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_album_url(@album)
-    assert_response :success
-  end
-
-  test "should update album" do
-    patch album_url(@album), params: { album: { description: @album.description, title: @album.title, user_id: @album.user_id } }
-    assert_redirected_to album_url(@album)
-  end
-
-  test "should destroy album" do
-    assert_difference("Album.count", -1) do
-      delete album_url(@album)
-    end
-
-    assert_redirected_to albums_url
   end
 end

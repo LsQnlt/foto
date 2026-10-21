@@ -17,14 +17,20 @@
 #  index_invitations_on_email  (email) UNIQUE
 #  index_invitations_on_token  (token) UNIQUE
 #
-one:
-  email: MyString
-  token: MyString
+pending:
+  email: invite@example.com
+  token: valid-token
   used: false
-  expires_at: 2025-07-21 17:49:17
+  expires_at: <%= 1.week.from_now.to_fs(:db) %>
 
-two:
-  email: MyString
-  token: MyString
+used:
+  email: used@example.com
+  token: used-token
+  used: true
+  expires_at: <%= 1.week.from_now.to_fs(:db) %>
+
+expired:
+  email: expired@example.com
+  token: expired-token
   used: false
-  expires_at: 2025-07-21 17:49:17
+  expires_at: <%= 1.day.ago.to_fs(:db) %>

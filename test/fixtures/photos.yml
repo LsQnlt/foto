@@ -19,10 +19,10 @@
 #
 #  album_id  (album_id => albums.id)
 #
-one:
-  image: MyString
-  album: one
+alice_public_photo:
+  album: alice_public
+  likes_count: 0
 
-two:
-  image: MyString
-  album: two
+bob_public_photo:
+  album: bob_public
+  likes_count: 3

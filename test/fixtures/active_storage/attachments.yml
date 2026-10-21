@@ -1,0 +1,9 @@
+alice_public_photo_image:
+  name: image
+  record: alice_public_photo (Photo)
+  blob: alice_public_photo_blob
+
+bob_public_photo_image:
+  name: image
+  record: bob_public_photo (Photo)
+  blob: bob_public_photo_blob
