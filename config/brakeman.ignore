@@ -1,12 +1,6 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "edf687f759ec9765bd5db185dbc615c80af77d6e7e19386fc42934e7a80307af",
-      "check_name": "EOLRuby",
-      "file": ".ruby-version",
-      "note": "Ruby 3.2 est EOL. Pris en charge par le jalon C de docs/plan-montee-de-version.md : retirer cette entree une fois Ruby mis a jour."
-    },
-    {
       "fingerprint": "98b26f60d776fd41ee6f088c833725145be9aac2d7c5b33780241c273622db42",
       "check_name": "EOLRails",
       "file": "Gemfile.lock",

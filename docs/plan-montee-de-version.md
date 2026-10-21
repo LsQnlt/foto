@@ -120,14 +120,16 @@ Branche `upgrade/gems-rails-8.0`, un commit par étape.
 
 > 🚀 **Déploiement n°1** : `db:prepare` au démarrage du conteneur applique la migration sur `production_queue.sqlite3`. Backup du volume avant. Vérifier ensuite dans les logs que Solid Queue démarre (`SolidQueue-1.7.0 Started Supervisor`) et qu'un upload de photo produit bien ses variantes.
 
-### Jalon C — Ruby
+### Jalon C — Ruby ✅
+
+Branche `upgrade/ruby-3.4`.
 
 | # | Étape |
 |---|-------|
-| C.1 | Ruby `3.2.2` → **`3.4.x`** dans `.ruby-version`, `mise.toml` et `Dockerfile` (`ARG RUBY_VERSION`). Bundler → dernière 2.x (`bundle update --bundler`). |
-| C.2 | Corriger les warnings Ruby 3.4 (gems sorties de la stdlib comme `csv`, `base64` ou `bigdecimal`, frozen string literals…). |
+| C.1 | ✅ Ruby 3.2.2 → **3.4.11** (`.ruby-version`, `mise.toml`, `Dockerfile`). Bundler verrouillé sur 2.6.9, la version livrée avec l'image `ruby:3.4.11-slim` (Bundler 4 est une nouvelle majeure, hors périmètre). Entrée « Ruby 3.2 EOL » retirée de `brakeman.ignore`. |
+| C.2 | ✅ `RUBYOPT=-W:deprecated bin/rails test` : aucun avertissement venant de notre code. Les seuls viennent d'ActiveAdmin beta11 (`:album.to_s` gelé à l'avenir), réglés par la beta23 au jalon D. Les gems sorties de la stdlib (csv, base64, bigdecimal, drb, ostruct) étaient déjà dans le lock. |
 
-> 🚀 **Déploiement n°2.**
+> 🚀 **Déploiement n°2** : build Docker local validé avant le merge (image de base changée, gems natives recompilées).
 
 #### C.3 — Ruby 4.0 (après le jalon D) : critères de validation
 
