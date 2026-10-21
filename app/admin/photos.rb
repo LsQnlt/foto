@@ -18,7 +18,13 @@
 #
 ActiveAdmin.register Photo do
   # Specify parameters which should be permitted for assignment
-  permit_params :image, :album_id
+  permit_params do
+    policy(Photo).permitted_attributes
+  end
+
+  before_save do |photo|
+    authorize photo
+  end
 
   # or consider:
   #

@@ -19,7 +19,9 @@
 #
 ActiveAdmin.register Album do
   # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, :published, :user_id, :password_protected, :password, uploaded_photos: []
+  permit_params do
+    policy(Album).permitted_attributes
+  end
 
   # or consider:
   #
@@ -32,13 +34,18 @@ ActiveAdmin.register Album do
   # For security, limit the actions that should be available
   actions :all, except: []
   member_action :delete_photo, method: :delete do
-    photo = Photo.find_by(id: params[:photo_id], album_id: params[:album_id])
+    photo = resource.photos.find_by(id: params[:photo_id])
     if photo
+      authorize photo, :destroy?
       photo.destroy
-      redirect_back fallback_location: admin_album_path(params[:album_id]), notice: t('active_admin.albums.flash.photo_deleted')
+      redirect_back fallback_location: admin_album_path(resource), notice: t('active_admin.albums.flash.photo_deleted')
     else
-      redirect_back fallback_location: admin_album_path(params[:album_id]), alert: t('active_admin.albums.flash.photo_not_found')
+      redirect_back fallback_location: admin_album_path(resource), alert: t('active_admin.albums.flash.photo_not_found')
     end
+  end
+
+  before_save do |album|
+    authorize album
   end
 
   # Add or remove filters to toggle their visibility
@@ -81,7 +88,7 @@ ActiveAdmin.register Album do
         end
         column "Actions" do |photo|
           link_to t('active_admin.albums.action.delete_photo'),
-            delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
+            delete_photo_admin_album_path(album, photo_id: photo.id),
             method: :delete,
             data: { confirm: t('active_admin.albums.confirm.delete_photo') }
         end
@@ -131,6 +138,8 @@ ActiveAdmin.register Album do
       else
         @album.password_digest = nil
       end
+
+      authorize @album
 
       if @album.save
         if params[:album][:uploaded_photos].present?

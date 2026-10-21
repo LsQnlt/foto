@@ -177,3 +177,5 @@ en:
       comment:
         one: Comment
         other: Comments
+  pundit:
+    not_authorized: "You are not allowed to perform this action."
