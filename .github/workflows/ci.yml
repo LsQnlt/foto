@@ -53,6 +53,9 @@ jobs:
       - name: Lint code for consistent style
         run: bin/rubocop -f github
 
+      - name: Check Rails best practices
+        run: bundle exec rails_best_practices . -c config/rails_best_practices.yml
+
   test:
     runs-on: ubuntu-latest
 
@@ -64,7 +67,7 @@ jobs:
     #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config google-chrome-stable
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config libvips google-chrome-stable
 
       - name: Checkout code
         uses: actions/checkout@v4

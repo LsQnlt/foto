@@ -168,9 +168,9 @@ Ajouter les variables suivantes :
 
 | Clé | Valeur | Secret ? |
 |-----|--------|----------|
-| `RAILS_MASTER_KEY` | `8bf3a8b4d...` | ✅ |
-| `SMTP_USERNAME` | `92e38f001@smtp-brevo.com` | ✅ |
-| `SMTP_PASSWORD` | `tH2awqAUCTmO5hp3` | ✅ |
+| `RAILS_MASTER_KEY` | (celle de `config/master.key`) | ✅ |
+| `SMTP_USERNAME` | (depuis Brevo) | ✅ |
+| `SMTP_PASSWORD` | (depuis Brevo) | ✅ |
 | `RAILS_ENV` | `production` | ❌ |
 | `SOLID_QUEUE_IN_PUMA` | `true` | ❌ |
 | `RAILS_LOG_LEVEL` | `info` | ❌ |

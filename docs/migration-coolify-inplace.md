@@ -155,7 +155,7 @@ Dans Coolify : **Projects → Create Project (`foto`)** → **Add Resource → A
 | Clé | Valeur | Secret ? |
 |-----|--------|----------|
 | `RAILS_MASTER_KEY` | (celle de `.kamal/secrets`) | ✅ |
-| `SMTP_USERNAME` | `92e38f001@smtp-brevo.com` | ✅ |
+| `SMTP_USERNAME` | (depuis Brevo) | ✅ |
 | `SMTP_PASSWORD` | (celle de `.kamal/secrets`) | ✅ |
 | `RAILS_ENV` | `production` | ❌ |
 | `SOLID_QUEUE_IN_PUMA` | `true` | ❌ |
@@ -249,14 +249,10 @@ Une fois `foto.rip` validé :
 
 ## 🆘 Rollback (si quelque chose casse)
 
-L'ancienne config Kamal reste dans le repo (`config/deploy.yml`). Pour revenir en arrière :
+> ℹ️ La config Kamal (`config/deploy.yml`, `.kamal/`, `bin/kamal`) a été retirée du repo après la migration. Elle reste consultable dans l'historique git (commit `ea4fc15`).
 
 1. Backup/restauration des données via l'archive locale `~/foto-migration-backups`
-2. Relancer un déploiement Kamal depuis le repo :
-   ```bash
-   bin/kamal deploy
-   ```
-3. (OU) re-déployer `foto` manuellement avec le volume `foto_storage` et re-créer le proxy
+2. Re-déployer `foto` manuellement (`docker run`) avec le volume `foto_storage`, ou réinstaller Coolify et recréer la ressource (voir `migration-runbook-complet.md`)
 
 > Le volume `foto_storage` étant intact, le retour arrière se limite à re-lancer les conteneurs, pas à re-importer des données.
 

@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   include Authentication
   include Pundit::Authorization
 
+  rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
+
   def record_page_view
     if response.content_type&.start_with?("text/html")
       ActiveAnalytics.record_request(request)
@@ -14,6 +16,13 @@ class ApplicationController < ActionController::Base
   end
 
   def pundit_user
+    resume_session
     Current.user
+  end
+
+  private
+
+  def user_not_authorized
+    redirect_back_or_to root_path, alert: t("pundit.not_authorized")
   end
 end

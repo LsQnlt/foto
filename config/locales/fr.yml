@@ -206,3 +206,5 @@ fr:
   albums:
     verify_password:
       incorrect: "Mot de passe incorrect"
+  pundit:
+    not_authorized: "Vous n'êtes pas autorisé à effectuer cette action."

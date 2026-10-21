@@ -1,7 +1,7 @@
 class AlbumsController < ApplicationController
   allow_unauthenticated_access
   before_action :set_user
-  before_action :set_album, only: [:show]
+  before_action :set_album, only: [:show, :verify_password]
   before_action :redirect_unless_unlocked, only: [:show]
   after_action :record_page_view, only: [:show]
 
@@ -22,7 +22,6 @@ class AlbumsController < ApplicationController
   end
 
   def verify_password
-    @album = Album.find(params[:id])
     if request.post?
       if @album.authenticate(params[:password])
         unlock_album(@album)
@@ -56,7 +55,9 @@ class AlbumsController < ApplicationController
     @user = User.find_by!(pseudonym: params[:pseudonym])
   end
 
+  # Un brouillon n'existe pas pour le public : 404, sauf pour son propriétaire ou un admin
   def set_album
-    @album = Album.includes(:photos).find(params[:id])
+    @album = @user.albums.includes(:photos).find(params[:id])
+    raise ActiveRecord::RecordNotFound unless policy(@album).show?
   end
 end

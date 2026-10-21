@@ -18,27 +18,25 @@
 #  user_id  (user_id => users.id)
 #
 ActiveAdmin.register Album do
-  # Specify parameters which should be permitted for assignment
-  permit_params :title, :description, :published, :user_id, :password_protected, :password, uploaded_photos: []
-
-  # or consider:
-  #
-  # permit_params do
-  #   permitted = [:title, :description, :user_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  permit_params do
+    policy(Album).permitted_attributes
+  end
 
   # For security, limit the actions that should be available
   actions :all, except: []
   member_action :delete_photo, method: :delete do
-    photo = Photo.find_by(id: params[:photo_id], album_id: params[:album_id])
+    photo = resource.photos.find_by(id: params[:photo_id])
     if photo
-      photo.destroy
-      redirect_back fallback_location: admin_album_path(params[:album_id]), notice: t('active_admin.albums.flash.photo_deleted')
+      authorize photo, :destroy?
+      photo.destroy!
+      redirect_back fallback_location: admin_album_path(resource), notice: t('active_admin.albums.flash.photo_deleted')
     else
-      redirect_back fallback_location: admin_album_path(params[:album_id]), alert: t('active_admin.albums.flash.photo_not_found')
+      redirect_back fallback_location: admin_album_path(resource), alert: t('active_admin.albums.flash.photo_not_found')
     end
+  end
+
+  before_save do |album|
+    authorize album
   end
 
   # Add or remove filters to toggle their visibility
@@ -81,7 +79,7 @@ ActiveAdmin.register Album do
         end
         column "Actions" do |photo|
           link_to t('active_admin.albums.action.delete_photo'),
-            delete_photo_admin_album_path(album_id: album.id, photo_id: photo.id),
+            delete_photo_admin_album_path(album, photo_id: photo.id),
             method: :delete,
             data: { confirm: t('active_admin.albums.confirm.delete_photo') }
         end
@@ -121,16 +119,14 @@ ActiveAdmin.register Album do
 
     def create
       @album = Album.new(permitted_params[:album])
-      if Current.user.has_role?(:admin)
-        @album.user_id ||= Current.user.id
-      else
-        @album.user = Current.user
-      end
+      @album.user_id ||= Current.user.id
       if permitted_params[:album][:password_protected] == "1"
         @album.password = permitted_params[:album][:password]
       else
         @album.password_digest = nil
       end
+
+      authorize @album
 
       if @album.save
         if params[:album][:uploaded_photos].present?

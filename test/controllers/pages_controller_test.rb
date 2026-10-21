@@ -10,4 +10,9 @@ class PagesControllerTest < ActionDispatch::IntegrationTest
     get pages_contact_url
     assert_response :success
   end
+
+  test "health check is up" do
+    get rails_health_check_url
+    assert_response :success
+  end
 end

@@ -17,16 +17,13 @@
 #  album_id  (album_id => albums.id)
 #
 ActiveAdmin.register Photo do
-  # Specify parameters which should be permitted for assignment
-  permit_params :image, :album_id
+  permit_params do
+    policy(Photo).permitted_attributes
+  end
 
-  # or consider:
-  #
-  # permit_params do
-  #   permitted = [:image, :album_id]
-  #   permitted << :other if params[:action] == 'create' && current_user.admin?
-  #   permitted
-  # end
+  before_save do |photo|
+    authorize photo
+  end
 
   # For security, limit the actions that should be available
   actions :all, except: []

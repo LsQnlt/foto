@@ -26,7 +26,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root to: redirect('/LsQnlt')
   mount ActiveAnalytics::Engine, at: "analytics"  # http://localhost:3000/analytics
-  resources :photos do
+  # Pas de CRUD public sur les photos : seulement les actions like et track_view
+  resources :photos, only: [] do
+    post :like, on: :member         # /photos/:id/like
     post :track_view, on: :member   # /photos/:id/track_view
   end
 
@@ -42,9 +44,5 @@ Rails.application.routes.draw do
         match 'verify_password', to: 'albums#verify_password', via: [:get, :post]
       end
     end
-  end
-
-  resources :photos, only: [] do
-    post :like, on: :member
   end
 end

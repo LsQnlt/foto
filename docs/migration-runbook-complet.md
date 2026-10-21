@@ -240,7 +240,7 @@ ssh coolify "sudo docker run --rm -v foto-storage:/data alpine sh -c 'du -sh /da
 | Variable | Valeur | Secret |
 |----------|--------|--------|
 | `RAILS_MASTER_KEY` | (depuis `.kamal/secrets`) | ✅ |
-| `SMTP_USERNAME` | `92e38f001@smtp-brevo.com` | ✅ |
+| `SMTP_USERNAME` | (depuis Brevo) | ✅ |
 | `SMTP_PASSWORD` | (depuis `.kamal/secrets`) | ✅ |
 | `RAILS_ENV` | `production` | ❌ |
 | `SOLID_QUEUE_IN_PUMA` | `true` | ❌ |

@@ -8,7 +8,9 @@ module Authentication
 
   class_methods do
     def allow_unauthenticated_access(**options)
-      skip_before_action :require_authentication, **options
+      # Parenthèses nécessaires : sans elles, rails_best_practices perd le fil du
+      # module et signale à tort les méthodes privées des contrôleurs suivants
+      skip_before_action(:require_authentication, **options)
     end
   end
 
@@ -47,7 +49,7 @@ module Authentication
   end
 
   def terminate_session
-    Current.session.destroy
+    Current.session.destroy!
     cookies.delete(:session_id)
   end
 end

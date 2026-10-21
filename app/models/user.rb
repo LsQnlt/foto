@@ -17,12 +17,10 @@
 class User < ApplicationRecord
   VALID_PSEUDONYM_REGEX = /\A[a-zA-Z0-9_-]+\z/
 
-  rolify
+  rolify before_add: :ensure_only_one_role
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :albums, dependent: :destroy
-
-  has_and_belongs_to_many :roles, join_table: :users_roles, before_add: :ensure_only_one_role
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
   validates :pseudonym, presence: true, uniqueness: true, format: { with: VALID_PSEUDONYM_REGEX, message: I18n.t("activerecord.errors.user.invalid") }

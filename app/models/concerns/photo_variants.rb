@@ -7,8 +7,17 @@ module PhotoVariants
     full: [2048, 2048],
   }.freeze
 
-  def photo_variant(photo, name, method: :resize_to_limit)
-    size = PHOTO_SIZES[name]
-    photo.image.variant(method => size)
+  def lightbox_variant(method: :resize_to_limit)
+    photo_variant(:lightbox, method:)
+  end
+
+  def thumb_variant(method: :resize_to_limit)
+    photo_variant(:thumb, method:)
+  end
+
+  private
+
+  def photo_variant(name, method:)
+    image.variant(method => PHOTO_SIZES[name])
   end
 end
