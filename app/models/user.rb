@@ -33,6 +33,10 @@ class User < ApplicationRecord
     ["created_at", "email_address", "id", "id_value", "password_digest", "updated_at"]
   end
 
+  def self.ransackable_associations(auth_object = nil)
+    []
+  end
+
   def assign_default_role
     add_role(:user) if roles.blank?
   end
