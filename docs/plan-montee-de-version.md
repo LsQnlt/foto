@@ -156,24 +156,21 @@ Branche `upgrade/rails-8.1`, un commit par étape.
 | D.2 | ✅ ActiveAdmin beta23 + activeadmin_assets 1.3.0, avec inherited_resources 2.1, ransack 6, formtastic 6 en cascade. Ransack 6 exige `ransackable_associations` sur `Album` et `User`. `app/assets/javascripts/active_admin.js` supprimé : jamais servi, activeadmin_assets injecte ses propres assets. |
 | D.3 | ✅ puma 8.0.2 (`~> 8.0`) : config minimale inchangée, écoute aussi en IPv6 par défaut. Plugin solid_queue 1.7 OK. |
 | D.4 | ✅ solid_cable 4.1.0 : aucune migration (notre `cable_schema.rb` a juste un index de plus que le template). |
-| D.5 | ✅ image_processing 2.2.0 : `ruby-vips` devient une dépendance à déclarer soi-même (ajoutée au Gemfile) ; plus de netteté après redimensionnement, vignettes très légèrement plus douces. active_storage_validations 4.1.1 : `spoofing_protection: true` inchangé, `accept` ajouté automatiquement aux champs fichier. |
+| D.5 | ✅ image_processing 2.2.0 : `ruby-vips` devient une dépendance à déclarer soi-même (ajoutée au Gemfile **avec `require: false`** : chargée au boot, elle fait planter les jobs CI sans `libvips`) ; plus de netteté après redimensionnement, vignettes très légèrement plus douces. active_storage_validations 4.1.1 : `spoofing_protection: true` inchangé, `accept` ajouté automatiquement aux champs fichier. |
 
 > 🚀 **Déploiement n°3** : build Docker + smoke test (puma 8, Solid Queue, vips) avant le merge. Après : vérifier chaque écran admin (le CSS d'ActiveAdmin est passé en Tailwind 4 entre les deux bêtas) et un upload de photo.
 
-### Reste à faire après le jalon D
+### Reste à faire
 
-- Ruby 4.0 (C.3 ci-dessous), une fois la prod stable une semaine.
-- rubocop-shopify 2.18 → 3.x (bloque rubocop en 1.82).
-- `.claude/rules/stimulus.md` mentionne encore Turbo 7.3 via `yarn.lock`, supprimé au jalon A.
+Tout le plan de montée de version est déroulé ; il reste :
 
----|-------|
-| D.1 | Rails `~> 8.1` + `rails-i18n ~> 8.1`. Lancer `bin/rails app:update` et relire chaque diff (je te les présenterai un par un). Garder `load_defaults 8.0`, puis activer les nouveaux défauts un par un via `config/initializers/new_framework_defaults_8_1.rb`, et passer à `load_defaults 8.1` une fois que tout passe. |
-| D.2 | **ActiveAdmin beta11 → beta23** + activeadmin_assets 1.3 : lire `UPGRADING.md` et le CHANGELOG, regénérer les vues/assets si nécessaire, tester chaque écran admin (albums, photos, users, dashboard) avec les autorisations. |
-| D.3 | puma 6 → 8 : vérifier `config/puma.rb` (plugin `solid_queue`, `SOLID_QUEUE_IN_PUMA`). |
-| D.4 | solid_cable 3 → 4 : schéma de la DB `cable`. |
-| D.5 | image_processing 1 → 2 (passer la contrainte à `~> 2.0`) et active_storage_validations 3 → 4 : relire le modèle `Photo` et `OptimizePhotoJob`. |
-
-> 🚀 **Déploiement n°3**, avec backup avant et vérification `PRAGMA integrity_check` après (commande dans le runbook).
+| Sujet | État |
+|-------|------|
+| Ruby 4.0 | PR #60 validée (tests, image Docker, smoke test), **à merger après quelques jours de prod stable** sur le jalon D : backup du volume, merge, smoke test en prod, RAM/CPU sous surveillance 48 h. |
+| Backups automatiques du volume `foto-storage` | **Rien en place** : aujourd'hui, backup manuel avant chaque déploiement. Prochaine vraie tâche : un backup planifié (Coolify ou `cron` + `tar` vers un autre hôte). |
+| Firewall du VPS | `sudo ufw status` à vérifier une fois, en particulier le port 8000 du panel Coolify. |
+| Image Docker Hub `lsqnlt/coolify` | Plus utilisée depuis le déploiement GitHub → Coolify : à supprimer sur Docker Hub. |
+| PR Dependabot #54 et #50 | Mises à jour d'actions GitHub (`checkout` 6, `upload-artifact` 5), sans risque : `@dependabot rebase` puis merge. |
 
 ---
 
