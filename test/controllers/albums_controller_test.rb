@@ -48,4 +48,32 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
     get user_album_url(album, pseudonym: "alice")
     assert_response :success
   end
+
+  test "a draft album is not found for visitors" do
+    get user_album_url(albums(:alice_draft), pseudonym: "alice")
+    assert_response :not_found
+
+    get verify_password_user_album_url(albums(:alice_draft), pseudonym: "alice")
+    assert_response :not_found
+  end
+
+  test "a draft album is not found for another user" do
+    sign_in_as users(:bob)
+    get user_album_url(albums(:alice_draft), pseudonym: "alice")
+    assert_response :not_found
+  end
+
+  test "a draft album is visible to its owner and to admins" do
+    [users(:alice), users(:admin)].each do |user|
+      sign_in_as user
+      get user_album_url(albums(:alice_draft), pseudonym: "alice")
+      assert_response :success, "#{user.pseudonym} devrait voir le brouillon"
+      delete session_url
+    end
+  end
+
+  test "an album is not found under another user's pseudonym" do
+    get user_album_url(albums(:alice_public), pseudonym: "bob")
+    assert_response :not_found
+  end
 end

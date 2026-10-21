@@ -34,4 +34,13 @@ class PermissionsTest < ActiveSupport::TestCase
     assert AlbumPolicy.new(alice, albums(:alice_public)).update?
     assert_not AlbumPolicy.new(alice, albums(:bob_public)).update?
   end
+
+  test "drafts are only shown to their owner and admins" do
+    draft = albums(:alice_draft)
+    assert AlbumPolicy.new(nil, albums(:alice_public)).show?
+    assert_not AlbumPolicy.new(nil, draft).show?
+    assert_not AlbumPolicy.new(users(:bob), draft).show?
+    assert AlbumPolicy.new(users(:alice), draft).show?
+    assert AlbumPolicy.new(users(:admin), draft).show?
+  end
 end

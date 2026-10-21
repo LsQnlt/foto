@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class AlbumPolicy < ApplicationPolicy
+  def show?
+    record.published? || create?
+  end
+
   def create?
     admin? || record.user_id == user&.id
   end

@@ -69,7 +69,7 @@
 | ✅ `User` déclarait `rolify` puis redéclarait `has_and_belongs_to_many :roles` | Warning `already initialized constant User::HABTM_Roles` dans les tests. | **Corrigé** : `rolify before_add: :ensure_only_one_role`. La règle « un seul rôle » est couverte par un test. |
 | ✅ `delete_photo` (admin albums) ne vérifiait pas le propriétaire de la photo | N'importe quel utilisateur connecté pouvait supprimer la photo d'un autre. | **Corrigé** : la photo est cherchée dans l'album via `resource`, qui est déjà limité par `policy_scope`, puis `authorize photo, :destroy?`. |
 | ✅ `user_id` (albums) et `album_id` (photos) acceptés sans vérification du rôle | Un utilisateur non admin pouvait réattribuer un album ou poster dans l'album d'un autre. | **Corrigé** : les attributs autorisés viennent de `policy(...).permitted_attributes`, et `authorize` est appelé avant chaque sauvegarde (`before_save`, plus le `create` personnalisé des albums). |
-| `AlbumsController#show` fait `Album.find(params[:id])` sans vérifier `published` ni le propriétaire | **Confirmé** : un brouillon répond en 200 sur `/<n'importe quel pseudo>/albums/<id>`. « Publié » ne sert qu'à masquer l'album de la liste. | À corriger (voir proposition). |
+| ✅ `AlbumsController#show` faisait `Album.find(params[:id])` sans vérifier `published` ni le propriétaire | Un brouillon répondait en 200 sur `/<n'importe quel pseudo>/albums/<id>`. | **Corrigé** : l'album est cherché parmi ceux du pseudo de l'URL, et un brouillon renvoie une 404 sauf pour son propriétaire ou un admin connecté (`AlbumPolicy#show?`). |
 
 ### 🖼️ Regénérer les lightbox en prod (après le déploiement de la correction)
 
