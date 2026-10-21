@@ -107,16 +107,18 @@ sudo docker exec -it <CONTENEUR_FOTO> bin/rails photos:purge_orphan_files       
 | A.3 | ✅ `package.json` supprimé : l'app n'utilise pas Node (importmap + tailwindcss-rails), et les scripts ESLint/Prettier référençaient des configs inexistantes. `hello_controller.js` (scaffold Stimulus inutilisé) supprimé. En local : `rm -rf node_modules yarn.lock .env` (fichiers ignorés par git, plus utilisés). |
 | A.4 | ✅ `photos:process_all` supprimée : elle ré-encodait tous les originaux WebP (perte de qualité) et invalidait toutes les variantes. |
 
-### Jalon B — Gems sans changement majeur (Ruby 3.2, Rails 8.0)
+### Jalon B — Gems sans changement majeur (Ruby 3.2, Rails 8.0) ✅
+
+Branche `upgrade/gems-rails-8.0`, un commit par étape.
 
 | # | Étape |
 |---|-------|
-| B.1 | `bundle update --conservative` sur les gems de dev/test (rubocop & co). Corriger les nouvelles alertes ou les ajouter à `.rubocop_todo.yml`. |
-| B.2 | Rails `8.0.2` → dernier patch `8.0.x` (correctifs de sécurité). |
-| B.3 | Mises à jour mineures : turbo-rails, importmap-rails, propshaft, sqlite3, bootsnap, solid_cache, thruster, tailwindcss-rails, pundit, jbuilder. |
-| B.4 | solid_queue `1.1` → `1.7` : **lire le CHANGELOG** pour repérer les migrations à ajouter dans `db/queue_schema.rb`. |
+| B.1 | ✅ Gems de dev/test : rubocop 1.82 (la 1.92 attend rubocop-shopify 3.x), rubocop-rails 2.36, selenium-webdriver, annotaterb, debug, foreman, web-console. Nouvelles règles appliquées, dont `:unprocessable_content` à la place de `:unprocessable_entity`, que Rack 3.1 ne garde que comme alias déprécié. |
+| B.2 | ✅ Rails 8.0.2 → 8.0.5.1 (7 CVE) et rails-i18n 8.0.2. La 8.0.5.1 bloque les loaders libvips non fuzzés : sans effet pour Foto (PNG, JPEG, WebP). |
+| B.3 | ✅ turbo-rails, importmap-rails, propshaft, sqlite3, bootsnap, solid_cache, thruster, tailwindcss-rails, pundit, jbuilder, puma 6.6.1. **puma épinglé `~> 6.6`** dans le Gemfile : le `>= 5.0` d'origine laissait Bundler sauter en 8.0 (adresse d'écoute IPv6 par défaut, plugin solid_queue 1.1 non testé avec). Puma 8 au jalon D avec solid_queue 1.7. |
+| B.4 | ✅ solid_queue 1.1.5 → 1.7.0 (support des *batches*). Migration `db/queue_migrate/20261021201323_add_batches_to_solid_queue.rb` (idempotente) et `db/queue_schema.rb` au niveau 1.7.0. ⚠️ Le générateur `solid_queue:update` écrit dans `db/migrate/` en développement, où il n'y a pas de base `queue` : le fichier a été déplacé à la main. |
 
-> 🚀 **Déploiement n°1**, avec backup avant.
+> 🚀 **Déploiement n°1** : `db:prepare` au démarrage du conteneur applique la migration sur `production_queue.sqlite3`. Backup du volume avant. Vérifier ensuite dans les logs que Solid Queue démarre (`SolidQueue-1.7.0 Started Supervisor`) et qu'un upload de photo produit bien ses variantes.
 
 ### Jalon C — Ruby
 

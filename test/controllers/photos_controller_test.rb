@@ -13,7 +13,7 @@ class PhotosControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference -> { photo.reload.likes_count } do
       post like_photo_url(photo)
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "track_view responds ok without authentication" do
