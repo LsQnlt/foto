@@ -36,7 +36,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
         user: { pseudonym: "nouveau", password: "short", password_confirmation: "short" },
       }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     assert_not invitations(:pending).reload.used?
   end
 end

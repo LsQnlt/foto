@@ -115,7 +115,7 @@ Layout/FirstHashElementIndentation:
   EnforcedStyle: consistent
   AutoCorrect: true
 
-Naming/PredicateName:
+Naming/PredicatePrefix:
   NamePrefix:
     - is_
   ForbiddenPrefixes:

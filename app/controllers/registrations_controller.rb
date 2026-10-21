@@ -17,7 +17,7 @@ class RegistrationsController < ApplicationController
       redirect_to user_albums_path(pseudonym: @user.pseudonym)
     else
       flash[:alert] = @user.errors.full_messages.join(", ")
-      render :new,  status: :unprocessable_entity
+      render :new,  status: :unprocessable_content
     end
   end
 

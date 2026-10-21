@@ -34,7 +34,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
   test "wrong password is refused" do
     album = albums(:alice_protected)
     post verify_password_user_album_url(album, pseudonym: "alice"), params: { password: "wrong" }
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
 
     get user_album_url(album, pseudonym: "alice")
     assert_redirected_to verify_password_user_album_path(album, pseudonym: "alice")

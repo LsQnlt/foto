@@ -10,7 +10,7 @@ class AlbumsController < ApplicationController
       .where(user_id: @user.id)
       .includes(cover_photo: { image_attachment: :blob })
       .published
-      .order('created_at DESC')
+      .order(created_at: :desc)
   end
 
   def show
@@ -28,7 +28,7 @@ class AlbumsController < ApplicationController
         redirect_to user_album_path(@album, pseudonym: @user.pseudonym)
       else
         flash.now[:alert] = t('.incorrect')
-        render :verify_password, status: :unprocessable_entity
+        render :verify_password, status: :unprocessable_content
       end
     end
   end
@@ -52,12 +52,12 @@ class AlbumsController < ApplicationController
   end
 
   def set_user
-    @user = User.find_by!(pseudonym: params[:pseudonym])
+    @user = User.find_by!(pseudonym: params.expect(:pseudonym))
   end
 
   # Un brouillon n'existe pas pour le public : 404, sauf pour son propriétaire ou un admin
   def set_album
-    @album = @user.albums.includes(:photos).find(params[:id])
+    @album = @user.albums.includes(:photos).find(params.expect(:id))
     raise ActiveRecord::RecordNotFound unless policy(@album).show?
   end
 end
