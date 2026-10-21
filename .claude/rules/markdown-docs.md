@@ -1,18 +1,16 @@
 ---
-description: Documents de développement et plans de validation
+description: README, guides et runbooks
 paths:
   - "README.md"
+  - "INSTALL.md"
+  - "CONTRIBUTING.md"
   - "docs/**/*.md"
-  - "local_docs/**/*.md"
 ---
 
 # Documentation
 
-Ne pas ajouter de documentation sans demande ; proposer d'en écrire lorsque cela est justifié. Écrire des phrases courtes et concrètes, avec chaque information à un seul endroit.
-
-Pour un plan QA, utiliser les sections utiles parmi : objectifs, prérequis, contrôle, scénarios, checklist et conduite à tenir en cas d'échec.
-
-- Numéroter les scénarios et aligner la checklist sur ces numéros.
-- Donner les rôles exacts de l'application, les URL et les libellés en code inline.
-- Un scénario contient un contexte bref, des étapes et le résultat attendu. Éviter les sous-sections et répétitions systématiques.
-- Garder le plan autonome et compréhensible par la personne qui valide.
+- Ne pas ajouter de documentation sans demande ; proposer d'en écrire quand une décision ou une procédure mérite d'être retrouvée.
+- Phrases courtes et concrètes. Chaque information à un seul endroit : un lien vers la section existante plutôt qu'une répétition.
+- `README.md`, `INSTALL.md` et `CONTRIBUTING.md` sont en anglais et s'adressent à un contributeur externe. Les runbooks de `docs/` sont en français et s'adressent au mainteneur.
+- Un runbook donne, dans l'ordre : objectif, prérequis, étapes numérotées avec les commandes exactes en bloc de code, vérification, et conduite à tenir en cas d'échec.
+- Les noms d'hôtes, alias SSH, chemins et commandes vont en code inline.

@@ -1,18 +1,40 @@
 ---
-description: Requêtes ActiveRecord et limites de transaction
+description: Modèles, requêtes ActiveRecord, ActiveStorage et jobs
 paths:
-  - "app/**/*.rb"
+  - "app/models/**/*.rb"
+  - "app/jobs/**/*.rb"
+  - "app/policies/**/*.rb"
   - "lib/**/*.rb"
-  - "spec/**/*.rb"
 ---
 
 # Rails et persistance
 
-Complète `.claude/rules/ruby.md`. Les conventions de services, contrôleurs, vues et migrations restent dans leurs règles dédiées et `AGENTS.md`.
+Complète `.claude/rules/ruby.md`.
 
-- Garder le filtrage et les agrégations dans la relation ActiveRecord lorsque le résultat attendu le permet. Utiliser `pluck` pour des colonnes seules et `exists?` pour une existence ; ne pas charger tous les records pour compter ou filtrer en Ruby.
-- Avant une boucle qui lit des associations, vérifier les requêtes produites. Choisir `preload`, `includes` ou `eager_load` selon les filtres et le résultat attendu ; ces méthodes ne sont pas interchangeables. Préserver le périmètre de clinique et les autorisations existants.
-- Passer les valeurs aux conditions SQL par hash ou paramètres liés. Pour des colonnes ou un tri dynamiques, utiliser une liste de choix autorisés, sans interpoler les paramètres utilisateur.
-- Regrouper les écritures qui doivent réussir ensemble dans une transaction. Un effet externe dépendant de leur persistance doit attendre le commit ; un `after_save` peut encore être suivi d'un rollback. Un callback `after_commit` ne rend pas cet effet atomique avec la base : conserver le mécanisme de livraison existant et ses garanties.
+## Requêtes
 
-Sources : [requêtes ActiveRecord](https://guides.rubyonrails.org/active_record_querying.html) et [callbacks de transaction](https://guides.rubyonrails.org/active_record_callbacks.html#transaction-callbacks). Vérifier les API contre la version de `Gemfile.lock`. Ces précisions viennent de Rails, pas d'un skill Rails dédié dans bsene/skills.
+- Garder filtrage, tri et comptage dans la relation ActiveRecord. `pluck` pour une colonne, `exists?` pour une existence ; ne pas charger tous les records pour compter en Ruby.
+- Préférer un scope nommé (`Album.published`) à une condition répétée dans les contrôleurs.
+- Avant une boucle qui touche une association ou une pièce jointe, précharger : `includes(image_attachment: :blob)` pour les photos, `includes(cover_photo: { image_attachment: :blob })` pour les couvertures d'albums. Une grille de photos sans préchargement produit une requête par vignette.
+- Passer les valeurs aux conditions SQL par hash ou paramètres liés ; jamais d'interpolation de paramètre utilisateur.
+
+## Écritures et transactions
+
+- Regrouper dans une transaction les écritures qui doivent réussir ensemble.
+- Un effet externe (job, mail) qui dépend de la persistance part en `after_commit`, comme `generate_variants_async` sur `Photo`.
+- Un job reçoit un id, pas un record. Il recharge avec `find_by` et sort proprement si le record a disparu (photo supprimée entre la mise en file et l'exécution).
+- Les jobs tournent sur Solid Queue ; les rendre rejouables sans effet de bord supplémentaire.
+
+## ActiveStorage et images
+
+- Les tailles de variantes vivent dans `PhotoVariants::PHOTO_SIZES` ; ne pas dupliquer de dimensions ailleurs.
+- Le traitement lourd (conversion WebP, génération des variantes) reste dans `OptimizePhotoJob`, jamais dans une requête web.
+- Conserver les validations de type et le `spoofing_protection` sur les pièces jointes.
+
+## Administration et autorisation
+
+- Tout modèle exposé dans ActiveAdmin définit `ransackable_attributes` et, si besoin, `ransackable_associations`.
+- L'autorisation passe par Pundit : une `Scope` par policy, `policy_scope` dans les collections admin. Les rôles viennent de Rolify (`admin`, `user`).
+- Les en-têtes `# == Schema Information` sont générés par annotaterb ; ne pas les éditer à la main.
+
+Vérifier les API contre la version de Rails dans `Gemfile.lock` (8.0).
