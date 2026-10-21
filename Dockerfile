@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
+# This Dockerfile is designed for production, not development. Used by Coolify, or build'n'run by hand:
 # docker build -t foto .
 # docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name foto foto
 
@@ -16,7 +16,7 @@ WORKDIR /rails
 # Install base packages
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
-    curl libjemalloc2 libvips sqlite3 imagemagick && \
+    curl libjemalloc2 libvips sqlite3 && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Set production environment
@@ -54,9 +54,9 @@ RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 # Final stage for app image
 FROM base
 
+# `file` is used by active_storage_validations (spoofing protection)
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y \
-    file imagemagick && \
+    apt-get install --no-install-recommends -y file && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Copy built artifacts: gems, application

@@ -10,8 +10,7 @@ Welcome! Follow these steps to get **Foto** running locally.
 | **Rails**        | 8.x             | Gem will be installed via Bundler            |
 | **Node.js**      | 18+             | Needed for JS runtime & bundling             |
 | **SQLite3**      | 3.35+           | Default dev database (PostgreSQL optional)   |
-| **Yarn**/**Bun** | latest          | JS package manager (pick one)                |
-| **ImageMagick**  | 7+              | Required by ActiveStorage for image variants |
+| **libvips**      | 8.x             | Image processing (variants, WebP conversion) |
 
 ## 2 — Clone the Repository
 
@@ -25,9 +24,6 @@ cd foto
 ```bash
 # Ruby gems
 bundle install
-
-# JavaScript packages
-yarn install   # or: bun install
 ```
 
 ## 4 — Database Setup
@@ -79,13 +75,10 @@ bin/rails test
 
 ## 9 — Deployment (Production)
 
-Foto is designed to deploy with **Kamal 2**. A minimal `deploy.yml` sample is included in `config/deploy/`. You’ll need:
+Foto is deployed with **Coolify** on an OVH VPS: every push to `main` triggers a build of the `Dockerfile` and a redeploy.
+The app needs:
 
-- A Linux host (e.g. OVH VPS)
-- Docker & Kamal installed on the server
-- A valid SSH key
+- a persistent volume mounted on `/rails/storage` (SQLite databases + uploaded images)
+- the `RAILS_MASTER_KEY`, `SMTP_USERNAME` and `SMTP_PASSWORD` environment variables
 
-cp .env.example .env # fill with secrets
-bin/deploy deploy # in place of kamal deploy
-
-_Read the comments in that file and adjust according to your environment._
+The migration from Kamal and the full Coolify setup are documented in [`docs/migration-runbook-complet.md`](docs/migration-runbook-complet.md).

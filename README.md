@@ -19,7 +19,7 @@ This platform was built to meet a few specific needs and principles:
 - **ActiveStorage** for managing image uploads and storage (locally)
 - **ActiveJob** for background processing, following Rails conventions
 - **ActiveAdmin** to manage photos and albums, offering better integration with Rails 8 asset management
-- **Kamal 2** for deployment, currently hosted on an **OVH VPS**
+- **Coolify** for deployment, currently hosted on an **OVH VPS**
 
 # 📚 More
 
