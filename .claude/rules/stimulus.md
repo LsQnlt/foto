@@ -14,5 +14,5 @@ paths:
 - Les appels au serveur envoient le jeton CSRF depuis la balise meta et déclarent `Accept: application/json` quand une réponse JSON est attendue.
 - Le HTML généré côté JS reste minimal. Si un gabarit dépasse quelques lignes, préférer un `<template>` dans la vue ou un partial servi par Turbo.
 - Pas de `console.log` de débogage dans le code livré ; `console.error` seulement dans un `catch`.
-- Le frontend est sur Turbo 7.3 (`yarn.lock`), distinct de la gem `turbo-rails` 2.x : ne pas supposer les fonctionnalités de Turbo 8 comme le morphing.
-- Le formatage vient de la configuration Prettier et ESLint du dépôt quand elle existe, sinon de celui des contrôleurs existants. Ne pas créer ni modifier cette configuration dans une modification de code.
+- Turbo vient de la gem `turbo-rails` (Turbo 8 via l'importmap, pas de `package.json`) : vérifier la version livrée dans `Gemfile.lock` avant de s'appuyer sur une fonctionnalité comme le morphing.
+- Le formatage suit celui des contrôleurs existants ; il n'y a ni Prettier ni ESLint dans le dépôt, ne pas en ajouter dans une modification de code.
