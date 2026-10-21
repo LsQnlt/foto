@@ -64,6 +64,8 @@ Rails.application.configure do
 
   config.active_job.queue_adapter = :inline
 
+  config.action_dispatch.verbose_redirect_logs = true
+
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
 
