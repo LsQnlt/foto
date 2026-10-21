@@ -145,10 +145,27 @@ On ne passe en Ruby 4 que si **toutes** ces conditions sont remplies. Ce sont de
 8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check` OK, et RAM/CPU dans Coolify comparables à la semaine précédente, à surveiller pendant 48 h.
 9. **Rollback prêt** : backup du volume pris juste avant, et procédure de rollback Coolify testée.
 
-### Jalon D — Rails 8.1 + majeures
+### Jalon D — Rails 8.1 + majeures ✅
+
+Branche `upgrade/rails-8.1`, un commit par étape.
 
 | # | Étape |
 |---|-------|
+| D.1 | ✅ Rails 8.1.4, `load_defaults 8.1` directement (tous les nouveaux défauts passent les tests). D'`app:update`, seuls les pages d'erreur, `bin/setup --reset` et `verbose_redirect_logs` en dev sont gardés ; `--force` écrase la config perso (SSL, Solid Queue, SMTP, AGPL), à restaurer depuis git à chaque fois. `brakeman.ignore` supprimé (plus d'EOL). |
+| D.2 | ✅ ActiveAdmin beta23 + activeadmin_assets 1.3.0, avec inherited_resources 2.1, ransack 6, formtastic 6 en cascade. Ransack 6 exige `ransackable_associations` sur `Album` et `User`. `app/assets/javascripts/active_admin.js` supprimé : jamais servi, activeadmin_assets injecte ses propres assets. |
+| D.3 | ✅ puma 8.0.2 (`~> 8.0`) : config minimale inchangée, écoute aussi en IPv6 par défaut. Plugin solid_queue 1.7 OK. |
+| D.4 | ✅ solid_cable 4.1.0 : aucune migration (notre `cable_schema.rb` a juste un index de plus que le template). |
+| D.5 | ✅ image_processing 2.2.0 : `ruby-vips` devient une dépendance à déclarer soi-même (ajoutée au Gemfile) ; plus de netteté après redimensionnement, vignettes très légèrement plus douces. active_storage_validations 4.1.1 : `spoofing_protection: true` inchangé, `accept` ajouté automatiquement aux champs fichier. |
+
+> 🚀 **Déploiement n°3** : build Docker + smoke test (puma 8, Solid Queue, vips) avant le merge. Après : vérifier chaque écran admin (le CSS d'ActiveAdmin est passé en Tailwind 4 entre les deux bêtas) et un upload de photo.
+
+### Reste à faire après le jalon D
+
+- Ruby 4.0 (C.3 ci-dessous), une fois la prod stable une semaine.
+- rubocop-shopify 2.18 → 3.x (bloque rubocop en 1.82).
+- `.claude/rules/stimulus.md` mentionne encore Turbo 7.3 via `yarn.lock`, supprimé au jalon A.
+
+---|-------|
 | D.1 | Rails `~> 8.1` + `rails-i18n ~> 8.1`. Lancer `bin/rails app:update` et relire chaque diff (je te les présenterai un par un). Garder `load_defaults 8.0`, puis activer les nouveaux défauts un par un via `config/initializers/new_framework_defaults_8_1.rb`, et passer à `load_defaults 8.1` une fois que tout passe. |
 | D.2 | **ActiveAdmin beta11 → beta23** + activeadmin_assets 1.3 : lire `UPGRADING.md` et le CHANGELOG, regénérer les vues/assets si nécessaire, tester chaque écran admin (albums, photos, users, dashboard) avec les autorisations. |
 | D.3 | puma 6 → 8 : vérifier `config/puma.rb` (plugin `solid_queue`, `SOLID_QUEUE_IN_PUMA`). |
