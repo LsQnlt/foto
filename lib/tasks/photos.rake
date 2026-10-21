@@ -69,7 +69,7 @@ namespace :photos do
       next unless confirm
 
       record.image.purge
-      record.destroy
+      record.destroy!
     end
 
     size_mb = (bytes.to_f / 1.megabyte).round(1)

@@ -37,7 +37,7 @@ ActiveAdmin.register Album do
     photo = resource.photos.find_by(id: params[:photo_id])
     if photo
       authorize photo, :destroy?
-      photo.destroy
+      photo.destroy!
       redirect_back fallback_location: admin_album_path(resource), notice: t('active_admin.albums.flash.photo_deleted')
     else
       redirect_back fallback_location: admin_album_path(resource), alert: t('active_admin.albums.flash.photo_not_found')
