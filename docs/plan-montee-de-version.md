@@ -44,7 +44,7 @@
 ## 🧭 Principes
 
 - **Une étape = un sujet = un commit** (que tu relis et commits toi-même). Pas de `bundle update` global en un seul coup.
-- Après chaque étape : `bin/rails test`, `bin/rubocop`, `bin/brakeman`, puis le **smoke test manuel** (voir plus bas).
+- Après chaque étape : `bin/rails test`, `bin/rubocop`, `bin/brakeman`, un boot en mode production (`RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails runner 'puts :ok'`), puis le **smoke test manuel** (voir plus bas).
 - **Backup du volume `foto-storage` avant chaque déploiement en prod** (méthode du runbook : pipe SSH, pas `/tmp`).
 - Déploiement en prod seulement à la fin des jalons A, B, C et D, pas à chaque étape.
 
@@ -131,19 +131,20 @@ Branche `upgrade/ruby-3.4`.
 
 > 🚀 **Déploiement n°2** : build Docker local validé avant le merge (image de base changée, gems natives recompilées).
 
-#### C.3 — Ruby 4.0 (après le jalon D) : critères de validation
+#### C.3 — Ruby 4.0 ✅ (branche `upgrade/ruby-4.0`)
 
-On ne passe en Ruby 4 que si **toutes** ces conditions sont remplies. Ce sont des critères vérifiables, pas « ça a l'air de marcher » :
+Critères vérifiés avant le merge :
 
-1. **Prérequis** : la prod tourne depuis au moins une semaine sans erreur avec Ruby 3.4 et Rails 8.1 (jalons C et D terminés). En cas de souci, on saura alors que Ruby 4 est en cause.
-2. **Dépendances** : `bundle install` passe sans conflit de `required_ruby_version`, et les gems natives (`sqlite3`, `bcrypt`, `nokogiri`, `ffi`…) ont un **binaire précompilé pour Ruby 4.0**. Sinon elles sont compilées pendant le build Coolify, ce qui est lent et gourmand en RAM sur le VPS.
-3. **Tests** : `bin/rails test` vert, **0 skip inattendu**, avec libvips installé.
-4. **Warnings** : `RUBYOPT="-W:deprecated" bin/rails test` n'affiche **aucun warning venant de `app/`, `lib/` ou `config/`**. Ceux des gems sont listés et acceptés un par un.
-5. **CI** verte (tests, rubocop, brakeman).
-6. **Build Docker** réussi en local (`docker build .`) avant de pousser sur `main`.
-7. **Smoke test** complet en local avec l'image buildée (`docker run` sur une copie du volume de prod).
-8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check` OK, et RAM/CPU dans Coolify comparables à la semaine précédente, à surveiller pendant 48 h.
-9. **Rollback prêt** : backup du volume pris juste avant, et procédure de rollback Coolify testée.
+1. **Prérequis** : jalon D en prod ; la branche attend quelques jours de prod calme avant d'être mergée, pour pouvoir attribuer un éventuel problème au bon changement.
+2. **Dépendances** : balayage des 152 gems du lock, 3 bornes hautes levées par mise à jour (nokogiri 1.19.4, minitest 6.0.6, sexp_processor 4.17.6), plus net-imap 0.6.8 : la 0.5.8 plantait au boot en production (`Ractor::IsolationError`), sans borne déclarée. `sqlite3`, `nokogiri`, `tailwindcss-ruby`, `thruster` ont leur binaire précompilé pour Ruby 4 ; les autres gems natives compilent comme avant.
+3. **Tests** : 78 verts, 0 skip. minitest 6 ne livre plus `minitest/mock` : le test des tâches rake remplace `stub` par une affectation de `ActiveStorage::Blob.service`.
+4. **Warnings** : `RUBYOPT=-W:deprecated bin/rails test` sans aucun avertissement.
+   **Boot production** : `RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails runner 'puts :ok'`. La suite de tests ne charge pas tout ce que la prod charge (`mail`, SMTP) : c'est ce test qui révèle une gem incompatible, sans build Docker.
+5. **CI** : verte sur la PR.
+6. **Build Docker** local sur `ruby:4.0.7-slim`, qui livre Bundler 4.0.20 : le lock est verrouillé dessus (`BUNDLED WITH`), `BUNDLE_DEPLOYMENT=1` reste accepté.
+7. **Smoke test** : puma 8, Solid Queue, vips, `/up` sur l'image locale.
+8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check`, RAM/CPU comparables pendant 48 h.
+9. **Rollback** : backup du volume avant, rollback Coolify disponible.
 
 ### Jalon D — Rails 8.1 + majeures ✅
 

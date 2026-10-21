@@ -6,7 +6,7 @@ Welcome! Follow these steps to get **Foto** running locally.
 
 | Tool             | Minimum Version | Notes                                        |
 | ---------------- | --------------- | -------------------------------------------- |
-| **Ruby**         | 3.4             | Use a version manager (rbenv, asdf, rvm)     |
+| **Ruby**         | 4.0             | Use a version manager (rbenv, asdf, rvm)     |
 | **Rails**        | 8.x             | Gem will be installed via Bundler            |
 | **Node.js**      | 18+             | Needed for JS runtime & bundling             |
 | **SQLite3**      | 3.35+           | Default dev database (PostgreSQL optional)   |
