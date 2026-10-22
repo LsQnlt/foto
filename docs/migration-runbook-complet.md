@@ -182,10 +182,10 @@ cat ~/.ssh/id_ed25519.pub | ssh ubuntu@54.36.100.76 \
 # Si fingerprint conflict :
 ssh-keygen -R 54.36.100.76
 
-# 3. Alias SSH (optionnel)
+# 3. Alias SSH : les docs utilisent `ssh coolify`
 mkdir -p ~/.ssh
 cat >> ~/.ssh/config << 'EOF'
-Host foto
+Host coolify foto
     HostName 54.36.100.76
     User ubuntu
     IdentityFile ~/.ssh/id_ed25519

@@ -31,7 +31,7 @@
 3. **Secret exposé** : le mot de passe SMTP Brevo était en clair dans `docs/migration-coolify.md` (commit `65380b3`, poussé sur `origin/main`). → Les secrets sont retirés des docs. La clé est **déjà désactivée côté Brevo**, donc pas besoin de réécrire l'historique. Il faut créer une nouvelle clé (voir 0.1).
 4. **Déploiement** : Coolify est désormais branché sur GitHub, et **chaque push sur `main` déclenche un déploiement**. Docker Hub n'est plus utilisé. Conséquences :
    - le merge sur `main` *est* la mise en prod : on ne merge qu'une fois la CI verte, car Coolify n'attend pas la CI ;
-   - rollback : passer par l'onglet *Rollback* de Coolify, qui garde les images des déploiements précédents (à vérifier une fois avant d'en avoir besoin), ou faire un `git revert` puis un push ;
+   - rollback : passer par l'onglet *Rollback* de Coolify, qui garde les images des déploiements précédents (testé le 22 octobre 2026 : le conteneur repasse sur l'image choisie, et le merge suivant redéclenche bien un déploiement automatique), ou faire un `git revert` puis un push ;
    - le build se fait sur le VPS, dont la RAM a été augmentée depuis le gel décrit dans le runbook : ✅ OK pour builder.
 7. ✅ **CI `scan_ruby` rouge depuis février** : `bin/brakeman` tournait avec `--ensure-latest`, qui échoue dès qu'une version plus récente de Brakeman existe, même sans problème de sécurité. → Option retirée du binstub, Brakeman mis à jour en 8.1.0 (c'est Dependabot qui signalera les prochaines versions). Les 2 alertes « dépendance en fin de vie » (Ruby 3.2, Rails 8.0) sont dans `config/brakeman.ignore` avec une note : **supprimer ces entrées aux jalons C et D**, Brakeman les signalera alors comme obsolètes.
 8. ✅ **`rails_best_practices` plantait** (hook overcommit silencieux) : symboles nus dans le YAML et mauvais format pour `except_methods` (`"Classe#méthode"`). Corrigé, mis à jour en 1.23.4, et ajouté au job `lint` de la CI. Ses alertes ont permis de supprimer 7 routes CRUD `photos` inutilisées (elles pointaient vers des actions inexistantes) et de passer à `destroy!` dans l'admin et les tâches rake.
@@ -131,11 +131,11 @@ Branche `upgrade/ruby-3.4`.
 
 > 🚀 **Déploiement n°2** : build Docker local validé avant le merge (image de base changée, gems natives recompilées).
 
-#### C.3 — Ruby 4.0 ✅ (branche `upgrade/ruby-4.0`)
+#### C.3 — Ruby 4.0 ✅ (PR #60, en prod le 22 octobre 2026)
 
 Critères vérifiés avant le merge :
 
-1. **Prérequis** : jalon D en prod ; la branche attend quelques jours de prod calme avant d'être mergée, pour pouvoir attribuer un éventuel problème au bon changement.
+1. **Prérequis** : jalon D en prod. Le délai de « quelques jours de prod calme » a été ramené à une journée : la PR n'a aucune migration, donc le rollback se limite à un changement d'image, et le trafic d'une semaine n'apporte pas plus de signal sur Foto.
 2. **Dépendances** : balayage des 152 gems du lock, 3 bornes hautes levées par mise à jour (nokogiri 1.19.4, minitest 6.0.6, sexp_processor 4.17.6), plus net-imap 0.6.8 : la 0.5.8 plantait au boot en production (`Ractor::IsolationError`), sans borne déclarée. `sqlite3`, `nokogiri`, `tailwindcss-ruby`, `thruster` ont leur binaire précompilé pour Ruby 4 ; les autres gems natives compilent comme avant.
 3. **Tests** : 78 verts, 0 skip. minitest 6 ne livre plus `minitest/mock` : le test des tâches rake remplace `stub` par une affectation de `ActiveStorage::Blob.service`.
 4. **Warnings** : `RUBYOPT=-W:deprecated bin/rails test` sans aucun avertissement.
@@ -143,8 +143,8 @@ Critères vérifiés avant le merge :
 5. **CI** : verte sur la PR.
 6. **Build Docker** local sur `ruby:4.0.7-slim`, qui livre Bundler 4.0.20 : le lock est verrouillé dessus (`BUNDLED WITH`), `BUNDLE_DEPLOYMENT=1` reste accepté.
 7. **Smoke test** : puma 8, Solid Queue, vips, `/up` sur l'image locale.
-8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check`, RAM/CPU comparables pendant 48 h.
-9. **Rollback** : backup du volume avant, rollback Coolify disponible.
+8. **Après le déploiement** : `ruby -v` dans le conteneur, `PRAGMA integrity_check` `ok` sur les 4 bases, aucune erreur dans les logs, smoke test en prod, RAM/CPU comparables pendant 48 h.
+9. **Rollback** : procédure Coolify testée sur une PR sans risque juste avant (voir point 4 de l'état des lieux), puis backup du volume à chaud par pipe SSH (2,5 Go), conteneur laissé en marche : seules les bases `queue` et `cache` peuvent sortir incohérentes, et `db:prepare` les recrée.
 
 ### Jalon D — Rails 8.1 + majeures ✅
 
@@ -166,11 +166,10 @@ Tout le plan de montée de version est déroulé ; il reste :
 
 | Sujet | État |
 |-------|------|
-| Ruby 4.0 | PR #60 validée (tests, image Docker, smoke test), **à merger après quelques jours de prod stable** sur le jalon D : backup du volume, merge, smoke test en prod, RAM/CPU sous surveillance 48 h. |
+| Ruby 4.0.8 | Sortie le 22 octobre 2026, image `ruby:4.0.8-slim` pas encore publiée. Quand elle l'est : `.ruby-version`, `mise.toml`, `Dependabot` (écosystème `docker`) la signale. |
 | Backups automatiques du volume `foto-storage` | **Rien en place** : aujourd'hui, backup manuel avant chaque déploiement. Prochaine vraie tâche : un backup planifié (Coolify ou `cron` + `tar` vers un autre hôte). |
 | Firewall du VPS | `sudo ufw status` à vérifier une fois, en particulier le port 8000 du panel Coolify. |
 | Image Docker Hub `lsqnlt/coolify` | Plus utilisée depuis le déploiement GitHub → Coolify : à supprimer sur Docker Hub. |
-| PR Dependabot #54 et #50 | Mises à jour d'actions GitHub (`checkout` 6, `upload-artifact` 5), sans risque : `@dependabot rebase` puis merge. |
 
 ---
 

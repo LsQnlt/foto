@@ -21,14 +21,14 @@ fi
 # 2. Créer l'alias
 mkdir -p ~/.ssh
 cat >> ~/.ssh/config << EOF
-Host foto
+Host coolify foto
     HostName $VPS_IP
     User $VPS_USER
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
 EOF
 chmod 600 ~/.ssh/config
-echo "✅ Alias 'foto' créé dans ~/.ssh/config"
+echo "✅ Alias 'coolify' créé dans ~/.ssh/config"
 
 echo ""
 echo "🧪 Teste maintenant: ssh coolify"
