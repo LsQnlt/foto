@@ -105,7 +105,7 @@ GEM
       activesupport (>= 7.0)
     ast (2.4.3)
     base64 (0.3.0)
-    bcrypt (3.1.20)
+    bcrypt (3.1.22)
     bigdecimal (3.2.1)
     bindex (0.8.1)
     bootsnap (1.26.0)
@@ -440,7 +440,7 @@ DEPENDENCIES
   activeadmin
   activeadmin_assets
   annotaterb
-  bcrypt (~> 3.1.7)
+  bcrypt (~> 3.1.22)
   bootsnap
   brakeman
   capybara
