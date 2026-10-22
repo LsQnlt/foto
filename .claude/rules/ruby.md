@@ -15,5 +15,5 @@ paths:
 - Préférer `public_send` à `send` pour un nom de méthode dynamique.
 - Pour une collection en mémoire, choisir la méthode qui dit l'intention : `map`, `select`, `find`, `any?`, `sum`. Pour une relation ActiveRecord, lire `.claude/rules/rails.md` avant de rapatrier le calcul en Ruby.
 - Pas de couche de services tant qu'un modèle, un concern ou un job suffit. Si une classe PORO devient nécessaire, la nommer d'après son cas d'usage et exposer une seule méthode publique.
-- Le style vient de `.rubocop.yml` (base `rubocop-shopify`) et de `.ruby-version` (3.4.11). Lancer `bundle exec rubocop` sur les fichiers modifiés ; ne pas rouvrir `.rubocop_todo.yml` pour un fichier non touché.
+- Le style vient de `.rubocop.yml` (base `rubocop-shopify`) et de `.ruby-version` (4.0.7). Lancer `bundle exec rubocop` sur les fichiers modifiés ; ne pas rouvrir `.rubocop_todo.yml` pour un fichier non touché.
 - Appliquer `.claude/rules/no-explanatory-comments.md`.

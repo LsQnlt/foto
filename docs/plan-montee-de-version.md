@@ -44,7 +44,7 @@
 ## 🧭 Principes
 
 - **Une étape = un sujet = un commit** (que tu relis et commits toi-même). Pas de `bundle update` global en un seul coup.
-- Après chaque étape : `bin/rails test`, `bin/rubocop`, `bin/brakeman`, puis le **smoke test manuel** (voir plus bas).
+- Après chaque étape : `bin/rails test`, `bin/rubocop`, `bin/brakeman`, un boot en mode production (`RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails runner 'puts :ok'`), puis le **smoke test manuel** (voir plus bas).
 - **Backup du volume `foto-storage` avant chaque déploiement en prod** (méthode du runbook : pipe SSH, pas `/tmp`).
 - Déploiement en prod seulement à la fin des jalons A, B, C et D, pas à chaque étape.
 
@@ -131,19 +131,20 @@ Branche `upgrade/ruby-3.4`.
 
 > 🚀 **Déploiement n°2** : build Docker local validé avant le merge (image de base changée, gems natives recompilées).
 
-#### C.3 — Ruby 4.0 (après le jalon D) : critères de validation
+#### C.3 — Ruby 4.0 ✅ (branche `upgrade/ruby-4.0`)
 
-On ne passe en Ruby 4 que si **toutes** ces conditions sont remplies. Ce sont des critères vérifiables, pas « ça a l'air de marcher » :
+Critères vérifiés avant le merge :
 
-1. **Prérequis** : la prod tourne depuis au moins une semaine sans erreur avec Ruby 3.4 et Rails 8.1 (jalons C et D terminés). En cas de souci, on saura alors que Ruby 4 est en cause.
-2. **Dépendances** : `bundle install` passe sans conflit de `required_ruby_version`, et les gems natives (`sqlite3`, `bcrypt`, `nokogiri`, `ffi`…) ont un **binaire précompilé pour Ruby 4.0**. Sinon elles sont compilées pendant le build Coolify, ce qui est lent et gourmand en RAM sur le VPS.
-3. **Tests** : `bin/rails test` vert, **0 skip inattendu**, avec libvips installé.
-4. **Warnings** : `RUBYOPT="-W:deprecated" bin/rails test` n'affiche **aucun warning venant de `app/`, `lib/` ou `config/`**. Ceux des gems sont listés et acceptés un par un.
-5. **CI** verte (tests, rubocop, brakeman).
-6. **Build Docker** réussi en local (`docker build .`) avant de pousser sur `main`.
-7. **Smoke test** complet en local avec l'image buildée (`docker run` sur une copie du volume de prod).
-8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check` OK, et RAM/CPU dans Coolify comparables à la semaine précédente, à surveiller pendant 48 h.
-9. **Rollback prêt** : backup du volume pris juste avant, et procédure de rollback Coolify testée.
+1. **Prérequis** : jalon D en prod ; la branche attend quelques jours de prod calme avant d'être mergée, pour pouvoir attribuer un éventuel problème au bon changement.
+2. **Dépendances** : balayage des 152 gems du lock, 3 bornes hautes levées par mise à jour (nokogiri 1.19.4, minitest 6.0.6, sexp_processor 4.17.6), plus net-imap 0.6.8 : la 0.5.8 plantait au boot en production (`Ractor::IsolationError`), sans borne déclarée. `sqlite3`, `nokogiri`, `tailwindcss-ruby`, `thruster` ont leur binaire précompilé pour Ruby 4 ; les autres gems natives compilent comme avant.
+3. **Tests** : 78 verts, 0 skip. minitest 6 ne livre plus `minitest/mock` : le test des tâches rake remplace `stub` par une affectation de `ActiveStorage::Blob.service`.
+4. **Warnings** : `RUBYOPT=-W:deprecated bin/rails test` sans aucun avertissement.
+   **Boot production** : `RAILS_ENV=production SECRET_KEY_BASE_DUMMY=1 bin/rails runner 'puts :ok'`. La suite de tests ne charge pas tout ce que la prod charge (`mail`, SMTP) : c'est ce test qui révèle une gem incompatible, sans build Docker.
+5. **CI** : verte sur la PR.
+6. **Build Docker** local sur `ruby:4.0.7-slim`, qui livre Bundler 4.0.20 : le lock est verrouillé dessus (`BUNDLED WITH`), `BUNDLE_DEPLOYMENT=1` reste accepté.
+7. **Smoke test** : puma 8, Solid Queue, vips, `/up` sur l'image locale.
+8. **Après le déploiement** : smoke test en prod, `PRAGMA integrity_check`, RAM/CPU comparables pendant 48 h.
+9. **Rollback** : backup du volume avant, rollback Coolify disponible.
 
 ### Jalon D — Rails 8.1 + majeures ✅
 
@@ -155,24 +156,21 @@ Branche `upgrade/rails-8.1`, un commit par étape.
 | D.2 | ✅ ActiveAdmin beta23 + activeadmin_assets 1.3.0, avec inherited_resources 2.1, ransack 6, formtastic 6 en cascade. Ransack 6 exige `ransackable_associations` sur `Album` et `User`. `app/assets/javascripts/active_admin.js` supprimé : jamais servi, activeadmin_assets injecte ses propres assets. |
 | D.3 | ✅ puma 8.0.2 (`~> 8.0`) : config minimale inchangée, écoute aussi en IPv6 par défaut. Plugin solid_queue 1.7 OK. |
 | D.4 | ✅ solid_cable 4.1.0 : aucune migration (notre `cable_schema.rb` a juste un index de plus que le template). |
-| D.5 | ✅ image_processing 2.2.0 : `ruby-vips` devient une dépendance à déclarer soi-même (ajoutée au Gemfile) ; plus de netteté après redimensionnement, vignettes très légèrement plus douces. active_storage_validations 4.1.1 : `spoofing_protection: true` inchangé, `accept` ajouté automatiquement aux champs fichier. |
+| D.5 | ✅ image_processing 2.2.0 : `ruby-vips` devient une dépendance à déclarer soi-même (ajoutée au Gemfile **avec `require: false`** : chargée au boot, elle fait planter les jobs CI sans `libvips`) ; plus de netteté après redimensionnement, vignettes très légèrement plus douces. active_storage_validations 4.1.1 : `spoofing_protection: true` inchangé, `accept` ajouté automatiquement aux champs fichier. |
 
 > 🚀 **Déploiement n°3** : build Docker + smoke test (puma 8, Solid Queue, vips) avant le merge. Après : vérifier chaque écran admin (le CSS d'ActiveAdmin est passé en Tailwind 4 entre les deux bêtas) et un upload de photo.
 
-### Reste à faire après le jalon D
+### Reste à faire
 
-- Ruby 4.0 (C.3 ci-dessous), une fois la prod stable une semaine.
-- rubocop-shopify 2.18 → 3.x (bloque rubocop en 1.82).
-- `.claude/rules/stimulus.md` mentionne encore Turbo 7.3 via `yarn.lock`, supprimé au jalon A.
+Tout le plan de montée de version est déroulé ; il reste :
 
----|-------|
-| D.1 | Rails `~> 8.1` + `rails-i18n ~> 8.1`. Lancer `bin/rails app:update` et relire chaque diff (je te les présenterai un par un). Garder `load_defaults 8.0`, puis activer les nouveaux défauts un par un via `config/initializers/new_framework_defaults_8_1.rb`, et passer à `load_defaults 8.1` une fois que tout passe. |
-| D.2 | **ActiveAdmin beta11 → beta23** + activeadmin_assets 1.3 : lire `UPGRADING.md` et le CHANGELOG, regénérer les vues/assets si nécessaire, tester chaque écran admin (albums, photos, users, dashboard) avec les autorisations. |
-| D.3 | puma 6 → 8 : vérifier `config/puma.rb` (plugin `solid_queue`, `SOLID_QUEUE_IN_PUMA`). |
-| D.4 | solid_cable 3 → 4 : schéma de la DB `cable`. |
-| D.5 | image_processing 1 → 2 (passer la contrainte à `~> 2.0`) et active_storage_validations 3 → 4 : relire le modèle `Photo` et `OptimizePhotoJob`. |
-
-> 🚀 **Déploiement n°3**, avec backup avant et vérification `PRAGMA integrity_check` après (commande dans le runbook).
+| Sujet | État |
+|-------|------|
+| Ruby 4.0 | PR #60 validée (tests, image Docker, smoke test), **à merger après quelques jours de prod stable** sur le jalon D : backup du volume, merge, smoke test en prod, RAM/CPU sous surveillance 48 h. |
+| Backups automatiques du volume `foto-storage` | **Rien en place** : aujourd'hui, backup manuel avant chaque déploiement. Prochaine vraie tâche : un backup planifié (Coolify ou `cron` + `tar` vers un autre hôte). |
+| Firewall du VPS | `sudo ufw status` à vérifier une fois, en particulier le port 8000 du panel Coolify. |
+| Image Docker Hub `lsqnlt/coolify` | Plus utilisée depuis le déploiement GitHub → Coolify : à supprimer sur Docker Hub. |
+| PR Dependabot #54 et #50 | Mises à jour d'actions GitHub (`checkout` 6, `upload-artifact` 5), sans risque : `@dependabot rebase` puis merge. |
 
 ---
 

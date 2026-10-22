@@ -1,6 +1,5 @@
 require "test_helper"
 require "rake"
-require "minitest/mock"
 
 class PhotosTasksTest < ActiveSupport::TestCase
   include ActiveJob::TestHelper
@@ -70,13 +69,17 @@ class PhotosTasksTest < ActiveSupport::TestCase
       end
       File.write(File.join(root, "production.sqlite3"), "db")
 
-      ActiveStorage::Blob.stub(:service, service) do
+      original_service = ActiveStorage::Blob.service
+      ActiveStorage::Blob.service = service
+      begin
         output, = capture_io { Rake::Task["photos:purge_orphan_files"].execute }
         assert_includes output, "DRY-RUN : 1 fichier(s) orphelin(s) sur 2"
         assert File.exist?(service.path_for(orphan))
 
         ENV["CONFIRM"] = "1"
         capture_io { Rake::Task["photos:purge_orphan_files"].execute }
+      ensure
+        ActiveStorage::Blob.service = original_service
       end
 
       assert_not File.exist?(service.path_for(orphan))
