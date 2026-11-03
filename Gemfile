@@ -38,7 +38,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 2.0"
 gem "ruby-vips", require: false
 
-gem "tailwindcss-rails", "~> 4.2"
+gem "tailwindcss-rails", "~> 4.7"
 
 gem "activeadmin"
 gem "activeadmin_assets"
